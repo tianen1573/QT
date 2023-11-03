@@ -1,3 +1,11 @@
+**布局**
+
+**样式**
+
+**信号与槽**
+
+**内存管理方式**
+
 # 基础
 
 ## 参数
@@ -14,19 +22,11 @@
 
 ![image-20231102140133867](QtNote.assets/image-20231102140133867.png)
 
-### 对齐
 
-#### 水平对齐
 
-#### 垂直对齐
+## 按钮
 
-对widget进行垂直对齐，界面可以起到按任意比例自动拉伸的效果
-
-## 函数和类型
-
-### 按钮
-
-##### QCheckBox
+#### QCheckBox
 
 对应![image-20231102152858395](QtNote.assets/image-20231102152858395.png)
 
@@ -34,19 +34,17 @@
 
 ![image-20231102152019650](QtNote.assets/image-20231102152019650.png)
 
-##### 
-
-##### QRadioButton
+#### QRadioButton
 
 对应![image-20231102152910416](QtNote.assets/image-20231102152910416.png)
 
-##### QPushButton
+#### QPushButton
 
 对应![image-20231102152921226](QtNote.assets/image-20231102152921226.png)
 
-### 布局
+## 布局
 
-##### QHBoxLayout--水平对齐
+#### QHBoxLayout--水平布局
 
 ###### addWidget(ptr)
 
@@ -56,11 +54,43 @@
 
 “空白占位小弹簧”
 
-##### QVBoxLayout--垂直对齐
+#### QVBoxLayout--垂直布局
 
 ###### addLayout
 
 对应addWidget(ptr)
+
+#### 常用函数
+
+##### setSpacing()
+
+![image-20231103094235728](QtNote.assets/image-20231103094235728.png)
+
+##### addSpacing()
+
+![image-20231103094314281](QtNote.assets/image-20231103094314281.png)
+
+##### setStretch ( int index, int stretch ) 设置拉伸比例
+
+![image-20231103095945402](QtNote.assets/image-20231103095945402.png)
+
+##### setContentsMargins(int left, int top, int right, int bottom)
+
+![image-20231103100042552](QtNote.assets/image-20231103100042552.png)
+
+#####  QFormLayout 表单布局
+
+![image-20231103100121159](QtNote.assets/image-20231103100121159.png)
+
+##### QGridLayout 网格布局
+
+![image-20231103100144418](QtNote.assets/image-20231103100144418.png)
+
+#####  布局嵌套
+
+![image-20231103100352925](QtNote.assets/image-20231103100352925.png)
+
+
 
 ##### setLayout
 
@@ -161,3 +191,20 @@ ui\_\*\*_.h
 
 没有UI文件，需要自己设计界面，较抽象。
 
+
+
+
+
+# 实例
+
+### 场景1
+
+![image-20231103141205368](QtNote.assets/image-20231103141205368.png)
+
+#### 菜单栏
+
+##### 历史
+
+> 一开始，将菜单栏定义成了一个widget，然后将其他组件填充到该widget中，虽然能做到说平有序排放，但是标题无法保证一直处于中心。
+>
+> 解决方案：将菜单栏分成三部分，定义四个widget，其中菜单栏一个，其他三部分一个。左右两部分固定大小，中间的为标题部分，对齐进行水平布局
