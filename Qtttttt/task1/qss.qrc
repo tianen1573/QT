@@ -1,5 +1,20 @@
 <RCC>
     <qresource prefix="/">
-        <file>style.qss</file>
+        <file>myStyle.qss</file>
+    </qresource>
+    <qresource prefix="/photo">
+        <file>photo (1).png</file>
+        <file>photo (2).png</file>
+        <file>photo (3).png</file>
+        <file>photo (4).png</file>
+        <file>photo (5).png</file>
+        <file>photo (6).png</file>
+        <file>photo (7).png</file>
+        <file>pp1.png</file>
+        <file>pp2.png</file>
+        <file>pp3.png</file>
+        <file>pp4.png</file>
+        <file>pp5.png</file>
+        <file>pp6.png</file>
     </qresource>
 </RCC>

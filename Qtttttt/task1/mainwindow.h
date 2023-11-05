@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMessageBox>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,7 +18,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButtonClose_12_clicked();
+    void showAccountInfo();
 
 private:
     Ui::MainWindow *ui;
