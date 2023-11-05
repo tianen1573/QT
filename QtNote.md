@@ -26,73 +26,82 @@
 > 14. datetimeedit ：
 > 15. lcdnumber ：
 
-## 布局
+## 基础类
 
-#### QHBoxLayout--水平布局
+### QAbstractButton
 
-###### addWidget(ptr)
+> QAbstractButton 类是按钮小部件的抽象基类，提供按钮通用的功能。
 
-作用为：QHBoxLayout类将控制ptr对应的元素的UI
+1. 设置文本
 
-###### addStretch(int)
+2. 设置主题(图像)及大小
 
-“空白占位小弹簧”
+3. 设置快捷键
 
-#### QVBoxLayout--垂直布局
+4. 设置默认选择按钮
 
-###### addLayout
+5. 四种选择![image-20231105233251128](%E5%9B%BE%E7%89%87/QtNote/image-20231105233251128.png)
 
-对应addWidget(ptr)
+6. 四种信号![image-20231105233412873](%E5%9B%BE%E7%89%87/QtNote/image-20231105233412873.png)
 
-#### 常用函数
+7. - 是否独占
+    - 是否重复，及重复间隔
+    - 是否可以被选中
+    - 是否被选中
+    - 是否按下
+    - 助记符，文本
 
-##### setSpacing()
+### QWidget Class
 
-![image-20231103094235728](QtNote.assets/image-20231103094235728.png)
+> QWidget 类是所有用户界面对象的基类。
 
-##### addSpacing()
+1. 函数![image-20231105234944993](%E5%9B%BE%E7%89%87/QtNote/image-20231105234944993.png)
+2. 设置子部件的描述和名称
+3. 是否填充小部件背景
+4. 设置小部件的基本尺寸，位置，max/min
+5. 设置字体
+6. 是否最大化，最小化，滑动窗口
+7. ...
 
-![image-20231103094314281](QtNote.assets/image-20231103094314281.png)
+### QLabel
 
-##### setStretch ( int index, int stretch ) 设置拉伸比例
+> QLabel 用于显示文本或图像。不提供用户交互功能。标签的视觉外观可以通过多种方式进行配置，并且可以用于为另一个小部件指定焦点助记键。
+>
+> ![image-20231105234033757](%E5%9B%BE%E7%89%87/QtNote/image-20231105234033757.png)
 
-![image-20231103095945402](QtNote.assets/image-20231103095945402.png)
+1. 是否有内容被选中
+2. 保存选定的文本
+3. 设置文本缩进
+4. 边距
+5. 是否自动打开文本里的链接
+6. 设置图片
+7. 是否缩放图片，使得像素图填充可用空间
+8. 设置文本
+9. 设置文本格式
+10. 是否自动换行
 
-##### setContentsMargins(int left, int top, int right, int bottom)
+## 样式表
 
-![image-20231103100042552](QtNote.assets/image-20231103100042552.png)
+> 选择器+声明，可以指定一个类型，对象，控件的样式风格。
 
-#####  QFormLayout 表单布局
+### 选择器类型
 
-![image-20231103100121159](QtNote.assets/image-20231103100121159.png)
+![image-20231105235908269](%E5%9B%BE%E7%89%87/QtNote/image-20231105235908269.png)
 
-##### QGridLayout 网格布局
-
-![image-20231103100144418](QtNote.assets/image-20231103100144418.png)
-
-#####  布局嵌套
-
-![image-20231103100352925](QtNote.assets/image-20231103100352925.png)
+1. 按类选，且包含它的子类
+2. 按类选，且不包含它的子类
+3. 按对象ID选
+4. 按属性要求选
 
 
 
-##### setLayout
+### 子控件
 
-setLayout()的参数为上两个类指针
+### 伪状态
 
-## 四种模式
+> ![image-20231106000302399](%E5%9B%BE%E7%89%87/QtNote/image-20231106000302399.png)
 
-![image-20231102145740261](QtNote.assets/image-20231102145740261.png)
-
-## 信号与信号槽
-
-![image-20231102160638157](QtNote.assets/image-20231102160638157.png)
-
-![image-20231102160759606](QtNote.assets/image-20231102160759606.png)
-
-![image-20231102160720546](QtNote.assets/image-20231102160720546.png)
-
-**三者的关系**
+1. 鼠标悬停/未悬停
 
 # 认识QT
 
