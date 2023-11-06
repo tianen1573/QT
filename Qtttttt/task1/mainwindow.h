@@ -20,6 +20,8 @@ public:
 private slots:
     void showAccountInfo();
 
+    void on_pushButtonBuy_6_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

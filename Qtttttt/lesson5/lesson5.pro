@@ -10,10 +10,14 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    receiver.cpp \
+    sender.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    receiver.h \
+    sender.h
 
 FORMS += \
     mainwindow.ui

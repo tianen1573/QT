@@ -7,6 +7,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     QObject::connect(ui->pushButtonPhone_6, SIGNAL(clicked()), this, SLOT(showAccountInfo()));
+
+    ui->widget_15->init();
+    ui->widget_17->init();
+    ui->widget_19->init();
+    ui->widget->init();
+    ui->widget_11->init();
+    ui->widget_5->init();
 }
 
 void MainWindow::showAccountInfo()
@@ -21,5 +28,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_pushButtonBuy_6_clicked()
+{
 
+}
 

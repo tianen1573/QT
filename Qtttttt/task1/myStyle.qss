@@ -10,11 +10,11 @@
     border: 1px solid #98A1AA;
 }
 
-#widgetUP_2{
+#label_34{
     width: 118px;
     height: 20px;
     font-size: 16px;
-    font-family: PingFangSC-Semibold, PingFang SC;
+    font-family: Segoe UI;
     font-weight: 600;
     color: #000000;
     line-height: 20px;
@@ -24,29 +24,17 @@
     width: 150px;
     height: 24px;
     font-size: 16px;
-    font-family: PingFangSC-Semibold, PingFang SC;
+    font-family: Segoe UI;
     font-weight: 600;
     color: #293440;
     line-height: 24px;
 }
-
-#widget, #widget_11, #widget_5, #widget_15, #widget_17, #widget_19{
-    background: #FFFFFF;
-    box-shadow: 0px 4px 19px 0px #E8ECFF;
-    border-radius: 6px;
-}
-
 #label_3, #label_21, #label_24, #label_27, #label_30, #label_33{
     width: 237px;
     height: 18px;
     font-size: 12px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: Segoe UI;
     font-weight: 400;
     color: #293440;
     line-height: 18px;
-}
-
-#widget:hover, #widget_11:hover, #widget_5:hover, #widget_15:hover, #widget_17:hover, #widget_19:hover {
-    background-color: lightblue;
-    cursor: pointer;
 }

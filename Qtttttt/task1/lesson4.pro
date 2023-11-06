@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    pointerqwidget.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    pointerqwidget.h
 
 FORMS += \
     mainwindow.ui
