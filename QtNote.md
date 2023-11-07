@@ -303,3 +303,60 @@ ui\_\*\*_.h
 > ![image-20231106175040710](QtNote.assets/image-20231106175040710.png)
 >
 > 最大最小保证图片不能无限被所需扩大，而填充属性，则用来保证图片的正常比例。
+
+# [libimobiledevice](https://github.com/libimobiledevice/libimobiledevice)
+
+> ![image-20231107111634665](QtNote.assets/image-20231107111634665.png)
+>
+> ![image-20231107111722904](QtNote.assets/image-20231107111722904.png)
+
+### idevice_new_with_options：将对象绑定到udid指定的设备
+
+>
+>该函数可以根据udid将对应的设备绑定到device对象上，并通过第三个参数，指定了该设备的连接方式。
+>~~~C++
+>int idevice_new_with_options(idevice_t* device, const char* udid, uint16_t options);
+>idevice_new_with_options(&device, udid, IDEVICE_LOOKUP_USBMUX | IDEVICE_LOOKUP_NETWORK);
+>
+>//释放
+>idevice_free(device);
+>~~~
+>
+
+> ![image-20231107173558710](QtNote.assets/image-20231107173558710.png)
+>
+> ![image-20231107173912274](QtNote.assets/image-20231107173912274.png)
+
+### lockdownd_client_new：将lockdownd 客户端对象绑定到指定的设备对象
+
+> 该函数可以将client对象绑定到对应的device对象上。
+>
+> ~~~C++
+> int lockdownd_client_new(idevice_t device, lockdownd_client_t* client, const char* label);
+> lockdownd_client_new(device, &client, TOOL_NAME);
+> 
+> //释放
+> lockdownd_client_free(client)
+> ~~~
+
+> ![image-20231107174441325](QtNote.assets/image-20231107174441325.png)
+>
+> ![image-20231107175025728](QtNote.assets/image-20231107175025728.png)
+
+**lockdownd对象**
+
+> ![image-20231107175035727](QtNote.assets/image-20231107175035727.png)
+
+**返回值对应的宏**
+
+> ![image-20231107175117531](QtNote.assets/image-20231107175117531.png)
+
+### lockdownd_get_device_name：获取设备名字
+
+> 该函数可以通过lockdo客户端对象获取其绑定的设备的名字。
+> ~~~C++
+> int lockdownd_get_device_name(lockdownd_client_t client, char** device_name);
+> lockdownd_get_device_name(client, &device_name)
+> ~~~
+
+> ![image-20231107175845270](QtNote.assets/image-20231107175845270.png)
