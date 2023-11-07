@@ -322,6 +322,7 @@ ui\_\*\*_.h
 >idevice_free(device);
 >~~~
 >
+>![image-20231107213707207](%E5%9B%BE%E7%89%87/QtNote/image-20231107213707207.png)
 
 > ![image-20231107173558710](QtNote.assets/image-20231107173558710.png)
 >
@@ -338,6 +339,8 @@ ui\_\*\*_.h
 > //释放
 > lockdownd_client_free(client)
 > ~~~
+>
+> ![image-20231107213719005](%E5%9B%BE%E7%89%87/QtNote/image-20231107213719005.png)
 
 > ![image-20231107174441325](QtNote.assets/image-20231107174441325.png)
 >
@@ -358,5 +361,109 @@ ui\_\*\*_.h
 > int lockdownd_get_device_name(lockdownd_client_t client, char** device_name);
 > lockdownd_get_device_name(client, &device_name)
 > ~~~
+>
+> ![image-20231107213735002](%E5%9B%BE%E7%89%87/QtNote/image-20231107213735002.png)
 
 > ![image-20231107175845270](QtNote.assets/image-20231107175845270.png)
+
+### lockdownd_pair：进行配对操作
+
+> 该函数可以将lockdownd客户端对象与其绑定的设备进行配对，以建立一个互相信任的通信。
+>
+> ~~~C++
+> lockdownd_pair(client, NULL);
+> idevice_error_t lockdownd_pair(lockdownd_client_t client, plist_t *pair_record);
+> ~~~
+>
+> ![image-20231107215158818](%E5%9B%BE%E7%89%87/QtNote/image-20231107215158818.png)
+
+> ![image-20231107215130694](%E5%9B%BE%E7%89%87/QtNote/image-20231107215130694.png)
+
+### userpref_get_paired_udids：获取已配对设备列表
+
+> 能够获取已配对设备的UDID列表
+>
+> ~~~C++
+> userpref_get_paired_udids(&udids, &count);
+> idevice_error_t userpref_get_paired_udids(const char *udid_list[], int *count);
+> ~~~
+>
+> ![image-20231107221205057](%E5%9B%BE%E7%89%87/QtNote/image-20231107221205057.png)
+
+> ![image-20231107221148458](%E5%9B%BE%E7%89%87/QtNote/image-20231107221148458.png)
+
+### idevice_get_udid：获取链接的设备的UDID，默认只连接了一部
+
+> 通过idevice对象，获取其所连接的设备的UDID
+>
+> ~~~C++
+> idevice_get_udid(device, &udid);
+> idevice_error_t idevice_get_udid(idevice_t device, char **udid);
+> ~~~
+>
+> ![image-20231107222415779](%E5%9B%BE%E7%89%87/QtNote/image-20231107222415779.png)
+
+> ![image-20231107222358811](%E5%9B%BE%E7%89%87/QtNote/image-20231107222358811.png)
+
+### userpref_read_pair_record：获取udid对应设备的历史配对记录
+
+> 能够通过udid，获取到其对应的设备历史配对记录，并将其保存在一个列表里。
+>
+> ~~~C++
+> userpref_read_pair_record(udid, &pair_record);
+> userpref_error_t userpref_read_pair_record(const char *udid, plist_t *pair_record)
+> ~~~
+>
+> 
+
+> ![image-20231107223431316](%E5%9B%BE%E7%89%87/QtNote/image-20231107223431316.png)
+
+### pair_record_get_host_id：提取记录中主机ID
+
+> 通过记录列表中的信息，提取到主机ID，并将其保存在一个字符串数组里。
+>
+> ~~~C++
+> pair_record_get_host_id(pair_record, &hostid);
+> userpref_error_t pair_record_get_host_id(plist_t pair_record, char** host_id)
+> ~~~
+>
+> 
+
+> ![image-20231107223807113](%E5%9B%BE%E7%89%87/QtNote/image-20231107223807113.png)
+
+### lockdownd_query_type：查询设备类型
+
+> 用于查询设备的特定信息或属性
+>
+> ~~~C++
+> lockdownd_query_type(client, &type);
+> LIBIMOBILEDEVICE_API lockdownd_error_t lockdownd_query_type(lockdownd_client_t client, char **type)
+> ~~~
+
+> ![image-20231107230107607](%E5%9B%BE%E7%89%87/QtNote/image-20231107230107607.png)
+
+### lockdownd_client_new_with_handshake：用于与 iOS 设备上的 "lockdownd" 守护进程建立连接并进行握手
+
+> 相较于lockdownd_client_new，做了更多的事：在与设备连接的基础上，新建一个lockdownd_client对象，等。
+>
+> ~~~C++
+> lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
+> LIBIMOBILEDEVICE_API lockdownd_error_t lockdownd_client_new_with_handshake(idevice_t device, lockdownd_client_t *client, const char *label)；
+> ~~~
+>
+> 
+
+> ![image-20231107230858706](%E5%9B%BE%E7%89%87/QtNote/image-20231107230858706.png)
+>
+> ![image-20231107230958768](%E5%9B%BE%E7%89%87/QtNote/image-20231107230958768.png)
+
+### lockdownd_unpair：解除lockdownd_client对象与设备的配对
+
+> 用于解除设备与主机的配对关系。
+>
+> ~~~C++
+> lockdownd_unpair(client, NULL);
+> lockdownd_error_t lockdownd_pair(lockdownd_client_t client, lockdownd_pair_record_t pair_record)
+> ~~~
+>
+> 
