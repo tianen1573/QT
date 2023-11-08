@@ -332,7 +332,7 @@ ui\_\*\*_.h
 
 ### lockdownd_client_new：将lockdownd 客户端对象绑定到指定的设备对象
 
-> 该函数可以将client对象绑定到对应的device对象上。
+> 该函数可以通过device对象创建一个lockdownd服务客户端对象，但需要自己处理之后的通信协议细节
 >
 > ~~~C++
 > int lockdownd_client_new(idevice_t device, lockdownd_client_t* client, const char* label);
@@ -446,7 +446,7 @@ ui\_\*\*_.h
 
 ### lockdownd_client_new_with_handshake：用于与 iOS 设备上的 "lockdownd" 守护进程建立连接并进行握手
 
-> 相较于lockdownd_client_new，做了更多的事：在与设备连接的基础上，新建一个lockdownd_client对象，等。
+> 相较于lockdownd_client_new，做了更多的事：建立lockdownd服务客户端对象后，会自己处理通信协议
 >
 > ~~~C++
 > lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
@@ -566,9 +566,194 @@ ui\_\*\*_.h
 
 ## 功能
 
+### 查询设备名字
+
+##### 获取idevice对象
+
+~~~C++
+idevice_new_with_options(&device, udid, IDEVICE_LOOKUP_USBMUX | IDEVICE_LOOKUP_NETWORK);
+~~~
+
+- 如果指定了udid，则会获取到udid对应的设备；
+
+- 如果没有指定，则udid对应实参传NULL，随机获取一个连接的设备
+
+通过device对象，可以获取到设备的udid
+
+##### 获取lockdownd服务客户端对象
+
+~~~C++
+lockdownd_client_new(device, &client, TOOL_NAME)
+~~~
+
+- 通过device对象，可以建立获得一个lockdownd客户端对象，用来锁定设备
+- 第三个参数用来指定lockdownd服务名称
+
+##### 获取设备名称
+
+~~~C++
+lockdownd_get_device_name(client, &device_name)
+~~~
+
+- 通过client对象，能够获得设备的名称
+
+### 设置设备名字
+
+##### 获取设备对象
+
+##### 获取完整的lockdownd服务客户端对象
+
+此处的完整是指，不仅需要获得lockdownd服务客户端对象，这个对象还需要完成后续的协议和身份验证之类的过程。相较于with_options，with_handshake更加完整，但耦合性也高。
+
+~~~C++
+lockdownd_client_new_with_handshake(device, &lockdown, TOOL_NAME);
+~~~
+
+##### 向手机发送请求
+
+~~~C++
+lockdownd_set_value(lockdown, NULL, "DeviceName", plist_new_string(argv[0]));
+
+LIBIMOBILEDEVICE_API lockdownd_error_t lockdownd_set_value(lockdownd_client_t client, const char *domain, const char *key, plist_t value)
+{
+	if (!client || !value) // 判断服务和名字是否存在
+		return LOCKDOWN_E_INVALID_ARG;
+
+	plist_t dict = NULL;
+	lockdownd_error_t ret = LOCKDOWN_E_UNKNOWN_ERROR;
+
+    // 构建请求
+	/* setup request plist */
+	dict = plist_new_dict();
+	plist_dict_add_label(dict, client->label);
+	if (domain) {
+		plist_dict_set_item(dict,"Domain", plist_new_string(domain));
+	}
+	if (key) {
+		plist_dict_set_item(dict,"Key", plist_new_string(key));
+	}
+	plist_dict_set_item(dict,"Request", plist_new_string("SetValue"));
+	plist_dict_set_item(dict,"Value", value);
+	
+    // 发送请求
+	/* send to device */
+	ret = lockdownd_send(client, dict);
+
+	plist_free(dict);
+	dict = NULL;
+
+	if (ret != LOCKDOWN_E_SUCCESS)
+		return ret;
+	
+    // 接受回复
+	/* Now get device's answer */
+	ret = lockdownd_receive(client, &dict);
+	if (ret != LOCKDOWN_E_SUCCESS)
+		return ret;
+
+	ret = lockdown_check_result(dict, "SetValue");
+	if (ret == LOCKDOWN_E_SUCCESS) {
+		debug_info("success");
+	}
+
+	if (ret != LOCKDOWN_E_SUCCESS) {
+		plist_free(dict);
+		return ret;
+	}
+
+	plist_free(dict);
+	return ret;
+}
+~~~
+
+- 构建SetValue请求字典
+- 发送请求字典到设备
+- 设备处理请求,返回响应字典
+- 接收响应字典
+- 从响应字典校验设置操作是否成功
+
 ### 查询设备ID
 
-> idevice_get_device_list_extended：能够获取当前设备连接的所有设备的信息，其中保存有设备ID
+##### 获取当前主机所连接的设备的记录列表
+
+~~~C++
+idevice_get_device_list_extended(&dev_list, &i)
+~~~
+
+- 可以直接获取当前设备保存的连接设备的链表
+- 当返回值为负数时，代表获取失败
+- 当没有设备连接时，也是可以返回成功的
+- 其中，i值代表连接设备的个数
+- dev_list存储了连接设备的大量信息
+
+##### 读取配置文件？
+
+~~~C++
+userpref_get_paired_udids(char ***list, unsigned int *count)
+~~~
+
+### 配对/解除配对
+
+##### 创建device对象
+
+~~~C++
+idevice_new_with_options(&device, udid, (use_network) ? IDEVICE_LOOKUP_NETWORK : IDEVICE_LOOKUP_USBMUX);
+idevice_get_udid(device, &udid);
+~~~
+
+- 创建对象
+- -获取udid
+
+##### 创建lockdownd客户端对象
+
+~~~C++
+lockdownd_client_new(device, &client, TOOL_NAME);
+~~~
+
+- 仅创建lockdownd客户端对象
+
+##### 处理握手过程
+
+包括：
+
+- 查询类型（query_type）
+- 验证配对（validate_pair）
+- 配对（pair）
+- 启动会话（start_session）
+- 等
+
+##### 查询类型
+
+~~~C++
+lockdownd_query_type(client, &type);
+~~~
+
+##### 配对
+
+~~~C++
+lockdownd_pair(client, NULL);
+~~~
+
+##### 解除配对
+
+~~~C++
+lockdownd_unpair(client, NULL);
+~~~
+
+### 验证配对
+
+##### 创建device对象
+
+##### 创建自动处理握手的lockdownd对象
+
+~~~C++
+lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
+~~~
+
+- 如果调用成功，则代表能够配对
+- 否则，代表验证失败
+
+##### 解除配对
 
 ### 备份
 
@@ -591,3 +776,7 @@ ui\_\*\*_.h
 ![image-20231108145210308](QtNote.assets/image-20231108145210308.png)
 
 ![image-20231108145508181](QtNote.assets/image-20231108145508181.png)
+
+## 疑问
+
+plist_new_string是什么
