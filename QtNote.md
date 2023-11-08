@@ -310,6 +310,8 @@ ui\_\*\*_.h
 >
 > ![image-20231107111722904](QtNote.assets/image-20231107111722904.png)
 
+## API
+
 ### idevice_new_with_options：将对象绑定到udid指定的设备
 
 >
@@ -467,3 +469,125 @@ ui\_\*\*_.h
 > ~~~
 >
 > 
+
+### lockdownd_start_service：
+
+> 用于启动指定的服务。
+>
+> ~~~C++
+> lockdownd_start_service(lockdown, AFC_SERVICE_NAME, &service);
+> lockdownd_error_t lockdownd_start_service(lockdownd_client_t client, const char *identifier, lockdownd_service_descriptor_t *service)
+> ~~~
+>
+> 
+
+> ![image-20231108092444011](QtNote.assets/image-20231108092444011.png)
+>
+> ![image-20231108092854420](QtNote.assets/image-20231108092854420.png)
+
+### afc_client_new：用于创建一个 AFC（Apple File Conduit）客户端对象。
+
+> 通过device，service创建一个afc对象。
+>
+> ~~~C++
+> afc_client_new(device, service, &afc);
+> afc_error_t afc_client_new(idevice_t device, lockdownd_service_descriptor_t service, afc_client_t * client)
+> ~~~
+>
+> ![image-20231108093425422](QtNote.assets/image-20231108093425422.png)
+
+> ![image-20231108093415528](QtNote.assets/image-20231108093415528.png)
+
+### lockdownd_start_service_with_escrow_bag：用于启动带有保管袋（escrow bag）的服务。
+
+> 用于启动带有保管袋（escrow bag）的服务。保管袋是一种加密的文件，用于存储设备密钥和其他安全相关的信息。通过lockdownd客户端对象和指定的服务，并将其保存在第三个参数里。
+>
+> ~~~C++
+> lockdownd_start_service_with_escrow_bag(lockdown, MOBILEBACKUP2_SERVICE_NAME, &service);
+> lockdownd_error_t lockdownd_start_service_with_escrow_bag(lockdownd_client_t client, const char *identifier, lockdownd_service_descriptor_t *service)
+> ~~~
+>
+> 
+
+> ![image-20231108094046160](QtNote.assets/image-20231108094046160.png)
+
+### mobilebackup2_client_new：用于创建一个 MobileBackup2 客户端对象
+
+> 通过deiveice对象，服务，创建一个客户端对象，并将其保存在第三个参数里。
+>
+> ~~~C++
+> mobilebackup2_client_new(device, service, &mobilebackup2);
+> mobilebackup2_error_t mobilebackup2_client_new(idevice_t device, lockdownd_service_descriptor_t service,
+> 						mobilebackup2_client_t * client)
+> ~~~
+>
+> 
+
+> ![image-20231108094454385](QtNote.assets/image-20231108094454385.png)
+
+### mobilebackup2_version_exchange：交换版本号
+
+> 通过mobilebackup2客户都对象，与服务的交换版本号
+>
+> ~~~C++
+> mobilebackup2_version_exchange(mobilebackup2, local_versions, 2, &remote_version);
+> mobilebackup2_error_t mobilebackup2_version_exchange(mobilebackup2_client_t client, double local_versions[], char count, double *remote_version)
+> ~~~
+>
+> 
+
+> ![image-20231108095821298](QtNote.assets/image-20231108095821298.png)
+
+### do_post_notification：用于在给定的设备上发送通知。
+
+> 给给定的设备发送通知
+>
+> ~~~C++
+> do_post_notification(device, NP_SYNC_WILL_START);
+> static void do_post_notification(idevice_t device, const char *notification)
+> ~~~
+>
+> 
+
+> ![image-20231108100733552](QtNote.assets/image-20231108100733552.png)
+
+### afc_file_open：用于在 AFC（Apple File Conduit）连接上打开文件的函数。它的作用是在给定的 AFC 连接上打开指定路径的文件，并将文件句柄存储在 `lockfile` 变量中。
+
+> 
+>
+> ~~~C++
+> afc_file_open(afc, "/com.apple.itunes.lock_sync", AFC_FOPEN_RW, &lockfile);
+> afc_error_t afc_file_open(afc_client_t client, const char *filename, afc_file_mode_t file_mode, uint64_t *handle)
+> ~~~
+>
+> 
+
+> ![image-20231108101506044](QtNote.assets/image-20231108101506044.png)
+
+## 功能
+
+### 查询设备ID
+
+> idevice_get_device_list_extended：能够获取当前设备连接的所有设备的信息，其中保存有设备ID
+
+### 备份
+
+![image-20231108143533444](QtNote.assets/image-20231108143533444.png)
+
+![image-20231108143624163](QtNote.assets/image-20231108143624163.png)
+
+![image-20231108143715921](QtNote.assets/image-20231108143715921.png)
+
+![image-20231108143749567](QtNote.assets/image-20231108143749567.png)
+
+![image-20231108143831571](QtNote.assets/image-20231108143831571.png)
+
+![image-20231108143856029](QtNote.assets/image-20231108143856029.png)
+
+![image-20231108144829187](QtNote.assets/image-20231108144829187.png)
+
+![image-20231108144849678](QtNote.assets/image-20231108144849678.png)
+
+![image-20231108145210308](QtNote.assets/image-20231108145210308.png)
+
+![image-20231108145508181](QtNote.assets/image-20231108145508181.png)
