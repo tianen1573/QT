@@ -757,26 +757,80 @@ lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
 
 ### 备份
 
-![image-20231108143533444](QtNote.assets/image-20231108143533444.png)
+##### 验证备份目录是否存在
 
-![image-20231108143624163](QtNote.assets/image-20231108143624163.png)
+##### 创建idevice对象
 
-![image-20231108143715921](QtNote.assets/image-20231108143715921.png)
+##### 创建自动握手的lockdownd客户端对象
 
-![image-20231108143749567](QtNote.assets/image-20231108143749567.png)
+##### 开启NP服务：通知服务，非必要
 
-![image-20231108143831571](QtNote.assets/image-20231108143831571.png)
+- 开启服务
+- 创建np客户端对象
 
-![image-20231108143856029](QtNote.assets/image-20231108143856029.png)
+##### 开启AFC服务：文件传输服务
 
-![image-20231108144829187](QtNote.assets/image-20231108144829187.png)
+- 开启服务
+- 创建对象
 
-![image-20231108144849678](QtNote.assets/image-20231108144849678.png)
+##### 开启备份服务——1
 
-![image-20231108145210308](QtNote.assets/image-20231108145210308.png)
+- 开启服务
+- 创建对象
+- 交换版本
+- 判断备份方式：全量/增量
 
-![image-20231108145508181](QtNote.assets/image-20231108145508181.png)
+##### 处理afc文件——2
 
-## 疑问
+- 同步通知
+- 处理文件句柄
+- 请求同步锁
+- 进行文件独占
+- 同步开始通知
+
+##### 发送备份请求——3
+
+##### 开始文件传输
+
+> 手机端打包好之后，将数据发送给PC端
+
+- 下载文件
+- 上传文件
+- 获取可用空间
+- 清理空间
+- 获取目录内容
+- 创建目录
+- 移动文件
+- 删除文件
+- 复制项目
+- 断开连接
+- 处理消息
+
+## BUG
 
 plist_new_string是什么
+
+~~~C++
+CONFIG(debug, debug|release) {
+    DEBUG_OR_RELEASE = debug
+}  else {
+    DEBUG_OR_RELEASE = release
+}
+
+# 加载库
+# thirdparty libraries
+include($$PWD/../thirdparty/thirdparty.pri)
+
+SOURCES += \
+    main.c \
+    mainbackup.cpp
+
+# Default rules for deployment.
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target
+~~~
+
+为什么删除拷贝完成后的空目录没有权限
+
+为什么第二次进行备份的时候，直接失败：CTF加载程序问题
