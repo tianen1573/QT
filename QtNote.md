@@ -222,7 +222,7 @@ ui\_\*\*_.h
 
 # 实例
 
-### 场景1
+### 场景1：UI
 
 ![image-20231103141205368](QtNote.assets/image-20231103141205368.png)
 
@@ -255,6 +255,167 @@ ui\_\*\*_.h
 > 伪类选择器
 >
 > ![image-20231105215324399](%E5%9B%BE%E7%89%87/QtNote/image-20231105215324399.png)
+
+### 场景2：消息框
+
+> 实现一个消息列表，能够将业务处理过程中产生的信息打印在窗口上
+>
+> ![image-20231110102144323](QtNote.assets/image-20231110102144323.png)
+
+#### 组件
+
+##### TextEdit
+
+> 能够进行输入输出
+>
+> ![image-20231110102423892](QtNote.assets/image-20231110102423892.png)
+
+#### 实现逻辑
+
+##### 获取主窗口指针
+
+> 通过包含主窗口指针的方式，进而获取textEdit组件的指针，对其进行操作。
+>
+> 首先该逻辑能够实现消息框功能，但是让一个类随意获取到主窗口指针是很危险的行为，并且通过这个函数调用的方式实现输出消息的传输，也会让业务逻辑的处理和输出消息的打印变成了顺序关系。
+>
+> 既不高内聚，又不低耦合
+
+~~~C++
+class tmpClass{
+    
+    tmpClass(MainWindow * uii);
+    
+    MainWindow * ui;
+    
+    void PrintText()
+    {
+        ui->textEdit->append("message");
+    }
+}
+~~~
+
+##### 信号和槽
+
+> 在tmpClass类中添加一个信号函数，该函数接受输出消息，当我们需要打印输出消息时，将消息传给该信号函数，并触发该函数。
+>
+> 在主窗口类添加一个槽函数，该函数可以接受输出消息，并将该消息打印到textEdit上。
+>
+> 使用信号和槽的方式，使得tmpClass在触发信号后，不再关心该消息什么时候打印，进而可以继续执行接下来的业务逻辑，将业务逻辑和打印消息进行了解耦。
+
+~~~C++
+class tmpClass{
+public:
+    
+signals:
+    void updateTxt(const QString& txt);
+}
+
+class MainWindow{
+private slots:
+    void onUpdateTxt(const QString& txt)
+    {
+        ui->textEdit->append(txt);
+    }
+}
+~~~
+
+### 场景3：多线程
+
+~~~C++
+MainWindow {
+
+    
+    SharedPointer<BackupMacker>  bm;
+
+    MainWindow() {
+
+    }
+    backupBtnClicked() {
+        bm = SharedPointer<BackupMacker>(new BackupMacker)
+        bm->start()
+    }
+    backupStopClicked() {
+        bm->stop()
+        stopIndicatorAnimationShow();
+    }
+
+    slotOnStart() {
+        showBackupPendingUI ...
+    }
+
+    slotOnStop() {
+        stopIndicatorAnimationHide();
+    }
+
+    slotOnProgress(progress) {
+        ui.progressbar.setValue(progress)
+    }
+
+}
+
+
+
+
+BackupMaker {
+
+    thread th;
+    exitFlag = false;
+
+    signal onStart()
+    signal onProgress()
+    signal onStop()
+    signal onLog()
+    signal onErr()
+
+    BackupMaker() {
+        ...
+    }
+
+    start() {
+        th = startThread(threadFunc)
+    }
+
+    stop() {
+        exitFlag = true
+        th.join();    
+    }
+
+    threadFunc() {
+        emit onStart
+        exitFlag = false
+        connectDevice ..
+        connectLockdown ..
+        startBackupService ...
+
+        while(true) {
+            if (exitFlag) {
+                break;
+            }
+            if (errFlag) {
+                break;
+            }
+            readMessage ..
+            dispatchMessage ..
+            emit onProgress()
+        }
+
+        do clean thins....
+        emit onStop()
+
+    }
+
+}
+
+
+mainthread.exec() {
+
+while(true) {
+    msg = getMessage()
+    dispathMessage(msg)
+}
+
+}
+~~~
 
 
 
@@ -309,6 +470,28 @@ ui\_\*\*_.h
 > ![image-20231107111634665](QtNote.assets/image-20231107111634665.png)
 >
 > ![image-20231107111722904](QtNote.assets/image-20231107111722904.png)
+
+## 服务简介
+
+#### lcokdownd
+
+![image-20231110110104150](QtNote.assets/image-20231110110104150.png)
+
+#### AFC
+
+![image-20231110110404916](QtNote.assets/image-20231110110404916.png)
+
+#### NP
+
+![image-20231110110558656](QtNote.assets/image-20231110110558656.png)
+
+#### mobilebackup移动备份服务
+
+![image-20231110110717603](QtNote.assets/image-20231110110717603.png)
+
+#### com.apple.itunes.lock_sync
+
+![image-20231110115119530](QtNote.assets/image-20231110115119530.png)
 
 ## API
 
@@ -757,16 +940,23 @@ lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
 
 ### 备份
 
-##### 验证备份目录是否存在
+##### 准备工作
+
+> 确认cmd为备份操作，确认备份路径存在
 
 ##### 创建idevice对象
 
 ##### 创建自动握手的lockdownd客户端对象
 
-##### 开启NP服务：通知服务，非必要
+##### 生成info.plist路径
+
+> 可以确认当前备份逻辑是全量还是增量
+
+##### 开启NP服务：通知服务
 
 - 开启服务
 - 创建np客户端对象
+- 设置np通知回调函数
 
 ##### 开启AFC服务：文件传输服务
 
@@ -775,20 +965,30 @@ lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
 
 ##### 开启备份服务——1
 
-- 开启服务
-- 创建对象
+- 开启带有”保管带“的备份服务
+
+- 创建备份服务客户端对象
+
 - 交换版本
-- 判断备份方式：全量/增量
+
+- 判断备份方式：全量/增量：非必要
+
+  
 
 ##### 处理afc文件——2
 
+- 打开指定文件：/com.apple.itunes.lock_sync，打开并锁定
 - 同步通知
 - 处理文件句柄
 - 请求同步锁
 - 进行文件独占
 - 同步开始通知
 
-##### 发送备份请求——3
+##### 生成目录并请求备份服务——3
+
+- 创建属于手机udid的备份目录
+- 处理一些杂项
+- 发送备份请求
 
 ##### 开始文件传输
 
@@ -808,29 +1008,120 @@ lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
 
 ## BUG
 
-plist_new_string是什么
+### 已解决
 
-~~~C++
-CONFIG(debug, debug|release) {
-    DEBUG_OR_RELEASE = debug
-}  else {
-    DEBUG_OR_RELEASE = release
-}
+#### 文件/目录删除问题
 
-# 加载库
-# thirdparty libraries
-include($$PWD/../thirdparty/thirdparty.pri)
+> 移植过程中，调用的函数可能是OS的API、编译器的库、语言的库。它们各自有环境问题的考虑。
+>
+> 如果调用了OS的API，则必须进行替换；如果是后两个，也可能出现问题，更加支持语言的库。
 
-SOURCES += \
-    main.c \
-    mainbackup.cpp
+> 在备份过程中，会执行删除文件/目录的操作，此时就需要考虑执行这个功能的函数是否考虑了不同环境下，还有就是文件的路径是什么形式的，Linux？Windows？
+>
+> 库里有一个路径拼接函数：string_build_path，经测试，实现的Linux类型的分隔符，即 “D:/Test/aa.txt”。
+>
+> 库里的删除目录/文件的函数为：
+>
+> ~~~C++
+> static int remove_file(const char* path)
+> {
+>     int e = 0;
+> #ifdef WIN32
+>     if (!DeleteFile(path)) {
+>         e = win32err_to_errno(GetLastError());
+>     }
+> #else
+>     if (remove(path) < 0) {
+>         e = errno;
+>     }
+> #endif
+>     return e;
+> }
+> 
+> static int remove_directory(const char* path)
+> {
+>     int e = 0;
+> #ifdef WIN32
+>     if (!RemoveDirectory(path)) {
+>         e = win32err_to_errno(GetLastError());
+>     }
+> #else
+>     if (remove(path) < 0) {
+>         e = errno;
+>     }
+> #endif
+>     return e;
+> }
+> ~~~
+>
+> 环境为WIN32，会执行Windows的API删除函数，但API删除函数需要的参数不是简单的字符串指针，而是宽字符串的指针，所以平常的路径作为参数时，API函数调用会失败。
+>
+> 以下为API正常调用情况：
+>
+> ~~~C+++
+> #include <fileapi.h>
+> #include <stdio.h>
+> int main()
+> {
+>     LPCWSTR filePath = L"D:\\TestBackUp\\abc/aa.txt";
+>     int ret = DeleteFile(filePath);
+>     printf("%d\n", ret); // 非0为正常返回
+> 
+>     return 0;
+> }
+> ~~~
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-~~~
+> 要不然在remove_file函数里，对路径转换一下；要不然直接使用QT的文件类(标准库的remove函数)，具有更高的兼容性。
 
-为什么删除拷贝完成后的空目录没有权限
+#### utils.h
 
-为什么第二次进行备份的时候，直接失败：CTF加载程序问题
+> 其所声明的所有函数，在C文件中可以，CPP文件中不可用。
+>
+> 如`string_build_path(...)`
+>
+> ~~~C++
+> #include <libimobiledevice-glue/utils.h>
+> ~~~
+
+> 原因：utils对应的文件是C函数，需要extern“C”，预处理。
+
+#### 标准库转QT库
+
+> 在项目开发过程中，当一些库具有相同功能的函数时，希望使用更改层次的函数。
+>
+> 如remove转向QFile::remove，需要注意返回值和内部逻辑判断。
+>
+> 返回值：remove成功为0，失败为-1，QFile::remove成功为true，返回为false
+
+> 比如标准库的remove在删除某个文件时，若路径不存在，将返回ENOENT；而QFile直接remove会返回false。
+>
+> 这时候就需要自己去写逻辑判断路径是否存在，并返回对应的值。
+
+#### 如何加载外部库
+
+> ~~~C++
+> CONFIG(debug, debug|release) {
+>     DEBUG_OR_RELEASE = debug
+> }  else {
+>     DEBUG_OR_RELEASE = release
+> }
+> 
+> # 加载库
+> # thirdparty libraries
+> include($$PWD/../thirdparty/thirdparty.pri)
+> 
+> SOURCES += \
+>     main.c \
+>     mainbackup.cpp
+> 
+> # Default rules for deployment.
+> qnx: target.path = /tmp/$${TARGET}/bin
+> else: unix:!android: target.path = /opt/$${TARGET}/bin
+> !isEmpty(target.path): INSTALLS += target
+> ~~~
+
+### 未解决
+
+> ![image-20231113000555836](QtNote.assets/image-20231113000555836.png)
+>
+> QFile的错误码没有errno那么详细，需要 测试对比
