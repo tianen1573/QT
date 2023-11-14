@@ -5,7 +5,7 @@
 IdeviceBackUp::IdeviceBackUp(QWidget *parent)
     : QWidget{parent}
 {
-
+    connect(this, &IdeviceBackUp::clearBackup, this, &IdeviceBackUp::stop);
 }
 
 void IdeviceBackUp::freeBackUpVar()
@@ -45,6 +45,8 @@ void IdeviceBackUp::freeBackUpVar()
         free(source_udid);
         source_udid = NULL;
     }
+
+    emit clearBackup();
 }
 
 
@@ -203,7 +205,7 @@ void IdeviceBackUp::BackUp()
             }
         }
 
-        // 打开指定文件，锁定文件？
+        // 打开指定文件，锁定文件
         if (cmd == CMD_BACKUP || cmd == CMD_RESTORE) {
             FileToolsBackUp::do_post_notification(device, NP_SYNC_WILL_START);
             afc_file_open(afc, "/com.apple.itunes.lock_sync", AFC_FOPEN_RW, &lockfile);
@@ -338,10 +340,12 @@ void IdeviceBackUp::BackUp()
                 if (!strcmp(dlmsg, "DLMessageDownloadFiles")) {
                     /* device wants to download files from the computer */
                     FileToolsBackUp::mb2_set_overall_progress_from_message(message, dlmsg);
+                    emit updateBar(FileToolsBackUp::overall_progress);
                     FileToolsBackUp::mb2_handle_send_files(mobilebackup2, message, backup_directory);
                 } else if (!strcmp(dlmsg, "DLMessageUploadFiles")) {
                     /* device wants to send files to the computer */
                     FileToolsBackUp::mb2_set_overall_progress_from_message(message, dlmsg);
+                    emit updateBar(FileToolsBackUp::overall_progress);
                     file_count += FileToolsBackUp::mb2_handle_receive_files(mobilebackup2, message, backup_directory);
                 } else if (!strcmp(dlmsg, "DLMessageGetFreeDiskSpace")) {
                     /* device wants to know how much disk space is available on the computer */
@@ -376,6 +380,7 @@ void IdeviceBackUp::BackUp()
                 } else if (!strcmp(dlmsg, "DLMessageMoveFiles") || !strcmp(dlmsg, "DLMessageMoveItems")) {
                     /* perform a series of rename operations */
                     FileToolsBackUp::mb2_set_overall_progress_from_message(message, dlmsg);
+                    emit updateBar(FileToolsBackUp::overall_progress);
                     plist_t moves = plist_array_get_item(message, 1);
                     uint32_t cnt = plist_dict_get_size(moves);
                     PRINT_VERBOSE(1, "Moving %d file%s\n", cnt, (cnt == 1) ? "" : "s");
@@ -429,6 +434,7 @@ void IdeviceBackUp::BackUp()
                     }
                 } else if (!strcmp(dlmsg, "DLMessageRemoveFiles") || !strcmp(dlmsg, "DLMessageRemoveItems")) {
                     FileToolsBackUp::mb2_set_overall_progress_from_message(message, dlmsg);
+                    emit updateBar(FileToolsBackUp::overall_progress);
                     plist_t removes = plist_array_get_item(message, 1);
                     uint32_t cnt = plist_array_get_size(removes);
                     PRINT_VERBOSE(1, "Removing %d file%s\n", cnt, (cnt == 1) ? "" : "s");
@@ -621,4 +627,20 @@ void IdeviceBackUp::BackUp()
     }
 
     freeBackUpVar();
+}
+
+void IdeviceBackUp::start()
+{
+    if(th == nullptr){
+        FileToolsBackUp::quit_flag = 0;
+        th = new std::thread(&IdeviceBackUp::BackUp,this);
+    }
+}
+
+void IdeviceBackUp::stop()
+{
+    if(th){
+        FileToolsBackUp::quit_flag = 1;
+        th->join();
+    }
 }

@@ -1,0 +1,13 @@
+debug/WidgetHome.o
+debug/WidgetLogin.o
+debug/WorkBase.o
+debug/WorkHome.o
+debug/WorkLogin.o
+debug/main.o
+debug/MainWindow.o
+debug/moc_MainWindow.o
+debug/moc_WidgetHome.o
+debug/moc_WidgetLogin.o
+debug/moc_WorkBase.o
+debug/moc_WorkHome.o
+debug/moc_WorkLogin.o

@@ -389,7 +389,7 @@ int FileToolsBackUp::mb2_status_check_snapshot_state(const char *path, const cha
 }
 
 /*
- * 打开手机端指定的文件
+ * 向设备发送通知
 */
 void FileToolsBackUp::do_post_notification(idevice_t device, const char *notification)
 {

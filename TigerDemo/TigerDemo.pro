@@ -18,20 +18,32 @@ CONFIG(debug, debug|release) {
 # thirdparty libraries
 include($$PWD/../thirdparty/thirdparty.pri)
 SOURCES += \
+    AFC.cpp \
+    Device.cpp \
+    DeviceBackUp.cpp \
     FileToolsBackUp.cpp \
     IdeviceBackUp.cpp \
     IdeviceId.cpp \
     IdevicePair.cpp \
+    Lockdownd.cpp \
+    MobileBackUp2.cpp \
+    NP.cpp \
     OsUtils.cpp \
     Test.c \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    AFC.h \
+    Device.h \
+    DeviceBackUp.h \
     FileToolsBackUp.h \
     IdeviceBackUp.h \
     IdeviceId.h \
     IdevicePair.h \
+    Lockdownd.h \
+    MobileBackUp2.h \
+    NP.h \
     OsUtils.h \
     endianness.h \
     mainwindow.h

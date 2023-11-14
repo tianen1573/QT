@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QMessageBox>
-
+#include <thread>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -111,18 +111,20 @@ class IdeviceBackUp : public QWidget
     Q_OBJECT
 public:
     explicit IdeviceBackUp(QWidget *parent = nullptr);
-
 private:
     void freeBackUpVar();
-signals:
-
-private slots:
     void BackUp();
-
+signals:
+    void clearBackup();
+    void updateBar(int p);
+private slots:
+    void start();
+    void stop();
 
 
 private:
     // 需要：变量
+    std::thread * th = nullptr;
     idevice_error_t ret = IDEVICE_E_UNKNOWN_ERROR;
     lockdownd_error_t ldret = LOCKDOWN_E_UNKNOWN_ERROR;
     int i = 0;

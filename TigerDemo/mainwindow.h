@@ -18,7 +18,7 @@ public:
 
 private slots:
     void onUpdateTxt(const QString& txt);
-
+    void onUpdateBar(int p);
 private:
     QTextEdit* textEdit;
     Ui::MainWindow *ui;
