@@ -24,20 +24,29 @@
 #include "AFC.h"
 #include "MobileBackup2.h"
 
+/*
+ * 开启备份操作需要的对象和服务的集成
+ * 对消息的实际处理
+ * 流程控制、打印进度、开启线程
+ *
+*/
 class DeviceBackUp : public QObject
 {
     Q_OBJECT
 public:
     explicit DeviceBackUp(QObject *parent = nullptr);
 
-    void backUp();
+    void start(); // 在一个线程上开启备份
+    void stop(); // 结束备份
     bool init();
-
+    void clear();
+    void backupThreadCallBack();
 signals:
 
     void logShow(const QString& str);
 
 private:
+    // 开启备份服务的流程
     bool connectDevice();
     bool connectLockdownd();
     bool connectNp();
@@ -45,6 +54,9 @@ private:
     bool lockAFCFile();
     bool connectMobilBp2();
     bool exchangeVersion();
+    bool sendBackupRequest(bool isFullBackup = true);
+    // 消息处理
+    void messageLoop();
 private:
     Device m_device;
     Lockdownd m_lockdown;

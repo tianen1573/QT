@@ -45,6 +45,7 @@ lockdownd_error_t Lockdownd::pair()
     return lockdownd_pair(m_lockdowndClient, NULL);
 }
 
+
 lockdownd_error_t Lockdownd::getValue(const char *domain, const char *key, plist_t *nodeValue)
 {
     return lockdownd_get_value(m_lockdowndClient, domain, key, nodeValue);

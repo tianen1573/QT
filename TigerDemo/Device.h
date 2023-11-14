@@ -7,6 +7,12 @@
 
 #include "libimobiledevice/libimobiledevice.h"
 
+/*
+ * 连接设备
+ * 获取设备对象：最基本的对象、带参数的对象
+ * 释放设备对象
+ * 获取设备udid
+*/
 class Device : public QObject
 {
     Q_OBJECT

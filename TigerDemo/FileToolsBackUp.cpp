@@ -522,6 +522,8 @@ void FileToolsBackUp::mb2_multi_status_add_file_error(plist_t status_dict, const
 int FileToolsBackUp::errno_to_device_error(int errno_value)
 {
     switch (errno_value) {
+    case 0:
+        return 0;
     case ENOENT:
         return -6;
     case EEXIST:

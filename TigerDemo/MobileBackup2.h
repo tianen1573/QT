@@ -6,6 +6,14 @@
 #include "libimobiledevice/mobilebackup2.h"
 #include "Device.h"
 
+/*
+ * 连接备份服务
+ * 创建对象、释放对象
+ * 交互版本
+ * 发送数据、接收数据
+ * 发送消息、接收消息
+ * 发送消息处理响应
+*/
 class MobileBackUp2 : public QObject
 {
     Q_OBJECT

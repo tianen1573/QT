@@ -33,6 +33,12 @@ idevice_error_t Device::createIdevice(const QString &udid)
 
 idevice_error_t Device::createIdeviceWithOptions(const QString &udid, idevice_options options)
 {
+    /*
+     * IDEVICE_LOOKUP_NETWORK：通过网络查找可用的设备。
+     * IDEVICE_LOOKUP_USBMUX：通过 USBMux 查找可用的设备。
+     * IDEVICE_LOOKUP_USBMUX_RECONNECT：如果设备断开连接，自动尝试重新连接。
+     * IDEVICE_LOOKUP_NETWORK_RECONNECT：如果设备断开连接，自动尝试重新连接。
+    */
     return idevice_new_with_options(&m_idevice, udid.toLocal8Bit(), options);
 }
 

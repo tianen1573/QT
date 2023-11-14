@@ -10,6 +10,13 @@
 #include <libimobiledevice/notification_proxy.h>
 #include "Device.h"
 
+/*
+ * 处理手机和PC的通知
+ * 创建对象、释放对象
+ * 订阅(指定)需要接收的消息
+ * 向手机端发送消息
+ * 回调函数：用于处理接收到的消息
+*/
 class NP : public QObject
 {
     Q_OBJECT

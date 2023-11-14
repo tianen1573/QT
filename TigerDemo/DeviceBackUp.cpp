@@ -1,5 +1,8 @@
 #include "DeviceBackUp.h"
 
+#include <QDir>
+
+
 #define TOOL_NAME "DeviceBackup"
 #define LOCK_ATTEMPTS 50
 #define LOCK_WAIT 200000
@@ -10,9 +13,17 @@ DeviceBackUp::DeviceBackUp(QObject *parent)
 
 }
 
-void DeviceBackUp::backUp()
+void DeviceBackUp::start()
 {
+    if(nullptr == m_thread)
+    {
+        // 初始化控制变量
+        m_quitFlag = false; // 结束标志
+        m_forceFullBackup = true; // 全量备份
+        m_backupPath = "D:/TestBackUp"; // 备份路径
 
+        m_thread = new std::thread(&DeviceBackUp::backupThreadCallBack, this);
+    }
 }
 
 bool DeviceBackUp::init()
@@ -40,6 +51,48 @@ bool DeviceBackUp::init()
 
 
     return true;
+}
+
+void DeviceBackUp::clear()
+{
+    // device, lockdownd, np, afc, lockFile, mbp2
+    // 后构造的先释放
+    m_mobilebackup2.freeMbp2();
+    if(m_lockfile){
+        m_afc.lockFile(m_lockfile, AFC_LOCK_UN);
+        m_afc.closeFile(m_lockfile);
+        m_lockfile = (uint64_t)0;
+    }
+    m_afc.freeAFC();
+    m_notificationProxy.freeNp();
+    m_lockdown.freeLockdownd();
+    m_device.freeIdevice();
+
+    m_thread->detach(); // 线程分离, 本次任务完成，主线程不再需要关心该线程
+    m_thread = nullptr;
+}
+
+void DeviceBackUp::backupThreadCallBack()
+{
+    // 执行初始化函数：构造一系列对象
+    if(m_quitFlag || !init())
+    {
+        // 清理
+        clear();
+        return ;
+    }
+
+    // 请求备份
+    if(m_quitFlag || !sendBackupRequest())
+    {
+        // 清理
+        clear();
+        return ;
+    }
+    // 处理消息
+
+    // 清理
+    clear();
 }
 
 bool DeviceBackUp::connectDevice()
@@ -170,4 +223,36 @@ bool DeviceBackUp::exchangeVersion()
         return false;
     }
     return true;
+}
+
+bool DeviceBackUp::sendBackupRequest(bool isFullBackup)
+{
+    emit logShow("请求备份...\n");
+
+    plist_t opts = plist_new_dict(); // 属性节点
+    if (isFullBackup) {
+        emit logShow("全量备份...\n");
+        plist_dict_set_item(opts,"ForceFullBackup",plist_new_bool(1));
+    }
+    if (m_willEncrypt) {
+        emit logShow("加密备份...\n");
+    } else {
+        emit logShow("非加密备份...\n");
+    }
+    auto err = m_mobilebackup2.sendRequest("Backup", m_udid.toUtf8(), m_udid.toUtf8(), opts);
+    if (opts) {
+        plist_free(opts);
+    }
+    if (MOBILEBACKUP2_E_SUCCESS != err) {
+        emit logShow("备份请求失败...\n");
+        return false;
+    }
+    return true;
+}
+
+void DeviceBackUp::messageLoop()
+{
+    // 等待手机端业务处理
+    // 接收消息
+    // 处理消息
 }

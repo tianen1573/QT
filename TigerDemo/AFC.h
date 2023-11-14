@@ -5,6 +5,11 @@
 #include <libimobiledevice/afc.h>
 #include "Device.h"
 
+/*
+ * 连接设备的AFC服务
+ * 创建AFC服务客户端对象，释放客户端对象
+ * 通过AFC：打开文件、关闭文件、读取文件、锁定文件
+*/
 class AFC : public QObject
 {
     Q_OBJECT
