@@ -2,29 +2,30 @@
 
 #include <QDir>
 #include <QStorageInfo>
+#include <QString>
 #include "FileToolsBackUp.h"
 #include "OsUtils.h"
 
-#include <Windows.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <libgen.h>
-#include <ctype.h>
-#include <time.h>
-#include <getopt.h>
-#include <libimobiledevice/libimobiledevice.h>
-#include <libimobiledevice/lockdown.h>
-#include <libimobiledevice/mobilebackup2.h>
-#include <libimobiledevice/notification_proxy.h>
-#include <libimobiledevice/afc.h>
-#include <libimobiledevice/installation_proxy.h>
-#include <libimobiledevice/sbservices.h>
-#include <libimobiledevice/diagnostics_relay.h>
+//#include <Windows.h>
+//#include <stdio.h>
+//#include <string.h>
+//#include <errno.h>
+//#include <stdlib.h>
+//#include <signal.h>
+//#include <unistd.h>
+//#include <dirent.h>
+//#include <libgen.h>
+//#include <ctype.h>
+//#include <time.h>
+//#include <getopt.h>
+//#include <libimobiledevice/libimobiledevice.h>
+//#include <libimobiledevice/lockdown.h>
+//#include <libimobiledevice/mobilebackup2.h>
+//#include <libimobiledevice/notification_proxy.h>
+//#include <libimobiledevice/afc.h>
+//#include <libimobiledevice/installation_proxy.h>
+//#include <libimobiledevice/sbservices.h>
+//#include <libimobiledevice/diagnostics_relay.h>
 #include <plist/plist.h>
 #ifdef __cplusplus
 extern "C" {
@@ -47,12 +48,10 @@ DeviceBackUp::DeviceBackUp(QObject *parent)
 void DeviceBackUp::start()
 {
     if(m_thread){
-//        emit backupInProgress();
+        emit displayWarningDialog("Bakcup", "The backup is in progress. Please wait or stop the current backup.");
     } else{
         // 初始化控制变量
         m_quitFlag = false; // 结束标志
-        m_forceFullBackup = true; // 全量备份
-        m_backupPath = "D:/TestBackUp"; // 备份路径
 
         m_thread = new std::thread(&DeviceBackUp::backupThreadCallBack, this);
     }
@@ -69,12 +68,9 @@ void DeviceBackUp::stop()
 
 bool DeviceBackUp::init()
 {
+    // 重置进度条和变量
     emit setProgressBar(0);
-    m_willEncrypt = false;
-    m_totalProgress = 0.0;
-    m_blockProgress = 0.0;
-    m_backupErrCode = 0;
-    m_lockfile = 0;
+    initVar();
 
     // 初始化过程中，外部或内部因素会使得备份提前结束
     // 所以每次我们都判断一下，也提前退出
@@ -97,6 +93,19 @@ bool DeviceBackUp::init()
     return true;
 }
 
+void DeviceBackUp::initVar()
+{
+    m_forceFullBackup = true;
+    m_willEncrypt = false;
+    m_quitFlag = false;
+    m_progress_finished = false;
+     m_overall_progress = 0.0f;
+    // //
+    m_backupErrCode = 0;
+    result_code = -1;
+    file_count = 0;
+}
+
 void DeviceBackUp::clear()
 {
     // device, lockdownd, np, afc, lockFile, mbp2
@@ -111,22 +120,14 @@ void DeviceBackUp::clear()
     m_notificationProxy.closeNp();
     m_lockdown.closeLockdownd();
     m_device.closeIdevice();
+    // 重置变量：在备份服务执行时进行重置，即开始时重置，结束时不重置
 
-     // 线程分离, 本次任务正常完成，主线程不再需要关心该线程
+    // 线程分离, 本次任务正常完成，主线程不再需要关心该线程
     if(m_progress_finished) {
         m_thread->detach();
-
     }
-    m_udid = nullptr;
-    m_totalProgress = 0.0;
-    m_blockProgress = 0.0;
-    m_backupErrCode = 0;
-    m_blockTotalSize = 0;
-    m_blockRecvSize = 0;
-    result_code = -1;
-    file_count = 0;
-    m_overall_progress = 0.0f;
-    m_progress_finished = false;
+    // 外部因素会join，则主线程会阻塞到该线程退出；
+    // 内部因素，该线程会比主线程早退出
     m_thread = nullptr;
 }
 
@@ -138,7 +139,7 @@ void DeviceBackUp::backupThreadCallBack()
     if(m_quitFlag || !init())
     {
         // 清理
-        emit logShow("初始化失败...\n");
+        emit logShow("\n\r\r\rInitialization failed.\n");
         clear();
         return ;
     }
@@ -146,30 +147,38 @@ void DeviceBackUp::backupThreadCallBack()
     if(m_quitFlag || !sendBackupRequest())
     {
         // 清理
+        emit logShow("\n\r\r\rBackup request failed.\n");
         clear();
         return ;
     }
     // 处理消息
     messageLoop();
+    // 打印结果
+    if(m_progress_finished) {
+        emit logShow("Backup successful.");
+    } else {
+        emit logShow("Backup failed.");
+    }
     // 清理
     clear();
+
 }
 
 bool DeviceBackUp::connectDevice()
 {
-    emit logShow("连接设备...\n");
+    emit logShow("Connecting to the device.");
 
     if(IDEVICE_E_SUCCESS == m_device.openIdevice()){
         m_udid = m_device.getUdid();
         m_device.closeIdevice();
     }else {
-        emit logShow("设备连接失败...\n");
+        emit logShow("\n\r\r\rConnecting to the device.\n");
         return false;
     }
 
     auto ret = m_device.openIdeviceWithOptions(m_udid, IDEVICE_LOOKUP_USBMUX);
     if(IDEVICE_E_SUCCESS != ret){
-        emit logShow("设备连接失败...\n");
+        emit logShow("\n\r\r\rConnecting to the device.\n");
         return false;
     }
 
@@ -178,10 +187,10 @@ bool DeviceBackUp::connectDevice()
 
 bool DeviceBackUp::connectLockdownd()
 {
-    emit logShow("连接lockdownd服务...\n");
+    emit logShow("Connecting to the lockdownd service.");
     auto ret = m_lockdown.openLockdowndWithHandshake(m_device);
     if(LOCKDOWN_E_SUCCESS != ret) {
-        emit logShow("lockdownd服务连接失败...\n");
+        emit logShow("Failed to connect to the lockdownd service");
         return false;
     }
     return true;
@@ -189,7 +198,7 @@ bool DeviceBackUp::connectLockdownd()
 
 bool DeviceBackUp::connectNp()
 {
-    emit logShow("连接NP服务...\n");
+    emit logShow("Connecting to the NP service.");
     lockdownd_service_descriptor_t service = nullptr;
     lockdownd_error_t ldret = m_lockdown.startService(NP_SERVICE_NAME,&service);
     if ((ldret == LOCKDOWN_E_SUCCESS) && service && service->port) {
@@ -198,14 +207,14 @@ bool DeviceBackUp::connectNp()
         lockdownd_service_descriptor_free(service);
         return true;
     } else{
-        emit logShow("NP服务连接失败");
+        emit logShow("\n\r\r\rFailed to connect to the NP service.\n");
         return false;
     }
 }
 
 bool DeviceBackUp::connectAFC()
 {
-    emit logShow("连接AFC服务...\n");
+    emit logShow("Connecting to the AFC service.");
     lockdownd_service_descriptor_t service = nullptr;
     lockdownd_error_t ldret = m_lockdown.startService(AFC_SERVICE_NAME, &service);
     if ((ldret == LOCKDOWN_E_SUCCESS) && service->port) {
@@ -213,7 +222,7 @@ bool DeviceBackUp::connectAFC()
         lockdownd_service_descriptor_free(service);
         return true;
     } else {
-        emit logShow("AFC服务连接失败...\n");
+        emit logShow("\n\r\r\rFailed to connect to the AFC service.\n");
         return false;
     }
 }
@@ -224,7 +233,7 @@ bool DeviceBackUp::lockAFCFile()
     // 打开文件
     // 加锁独占
 
-    emit logShow("锁定afc文件...\n");
+    emit logShow("Locking AFC-related files.");
     afc_error_t aerr;
     bool success = true;
     m_notificationProxy.postNotifications(NP_SYNC_WILL_START);// 通知
@@ -247,7 +256,7 @@ bool DeviceBackUp::lockAFCFile()
         if (!success) {
             m_afc.closeFile(m_lockfile);
             m_lockfile = 0;
-            emit logShow("afc文件锁定失败...\n");
+            emit logShow("\n\r\r\rLocking AFC-related files.\n");
             return false;
         }
     }
@@ -256,30 +265,31 @@ bool DeviceBackUp::lockAFCFile()
 
 bool DeviceBackUp::connectMobilBp2()
 {
-    emit logShow("连接备份服务...\n");
+    emit logShow("Connecting to the backup2 service.");
     lockdownd_service_descriptor_t service = nullptr;
     lockdownd_error_t ldret = m_lockdown.startServiceWithEscrowBag(MOBILEBACKUP2_SERVICE_NAME, &service);
     if ((ldret == LOCKDOWN_E_SUCCESS) && service && service->port) {
         QString tmp;
-        tmp.sprintf("\"%s\" service on port %d.\n", MOBILEBACKUP2_SERVICE_NAME, service->port);
+//        tmp.sprintf("\"%s\" service on port %d.", MOBILEBACKUP2_SERVICE_NAME, service->port);
+        tmp = QString("%1 service on port %2.").arg(MOBILEBACKUP2_SERVICE_NAME).arg(service->port);
         emit logShow(tmp);
         m_mobilebackup2.openMbp2(m_device,service);
         lockdownd_service_descriptor_free(service);
         return true;
     } else  {
-        emit logShow("备份服务连接失败...\n");
+        emit logShow("\n\r\r\rFailed to connect to the backup2 service.\n");
         return false;
     }
 }
 
 bool DeviceBackUp::exchangeVersion()
 {
-    emit logShow("交换版本信息...\n");
+    emit logShow("Exchanging version information.");
     double local_versions[2] = {2.0, 2.1};
     double remote_version = 0.0;
     err = m_mobilebackup2.versionExchange(local_versions, 2, &remote_version);
     if (MOBILEBACKUP2_E_SUCCESS != err) {
-        emit logShow("版本信息交换失败...\n");
+        emit logShow("\n\r\r\rFailed to exchange version information.\n");
         return false;
     }
     return true;
@@ -287,24 +297,24 @@ bool DeviceBackUp::exchangeVersion()
 
 bool DeviceBackUp::sendBackupRequest(bool isFullBackup)
 {
-    emit logShow("请求备份...\n");
+    emit logShow("Requesting backup.");
 
     plist_t opts = plist_new_dict(); // 属性节点
     if (isFullBackup) {
-        emit logShow("全量备份...\n");
+        emit logShow("ForceFullBackup.");
         plist_dict_set_item(opts,"ForceFullBackup",plist_new_bool(1));
     }
     if (m_willEncrypt) {
-        emit logShow("加密备份...\n");
+        emit logShow("Encrypted backup.");
     } else {
-        emit logShow("非加密备份...\n");
+        emit logShow("Unencrypted backup.");
     }
     auto err = m_mobilebackup2.sendRequest("Backup", m_udid.toUtf8(), m_udid.toUtf8(), opts);
     if (opts) {
         plist_free(opts);
     }
     if (MOBILEBACKUP2_E_SUCCESS != err) {
-        emit logShow("备份请求失败...\n");
+        emit logShow("\n\r\r\rForceFullBackup.\n");
         return false;
     }
     return true;
@@ -312,20 +322,20 @@ bool DeviceBackUp::sendBackupRequest(bool isFullBackup)
 
 void DeviceBackUp::messageLoop()
 {
-    emit logShow("等待设备...\n");
     char *dlmsg = NULL;
     plist_t message = nullptr;
-    while(!m_quitFlag)
+    // 异常退出 或 正常结束
+    while(!m_quitFlag || m_progress_finished)
     {
         dlmsg = nullptr;
         message = nullptr;
-        // 等待消息
+        // 获取消息
         mobilebackup2_error_t mberr = m_mobilebackup2.receiveMessage(&message, &dlmsg);
-        if (mberr == MOBILEBACKUP2_E_RECEIVE_TIMEOUT) {
-            emit logShow("等待消息...\n");
+        if (mberr == MOBILEBACKUP2_E_RECEIVE_TIMEOUT) { // 无
+            emit logShow("Waiting...");
             continue;
-        } else if (mberr != MOBILEBACKUP2_E_SUCCESS) {
-            emit logShow("消息读取失败...\n");
+        } else if (mberr != MOBILEBACKUP2_E_SUCCESS) { // 获取失败
+            emit logShow("\n\r\r\rFailed to read the message.\n");
             break;
         }
         // 处理消息
@@ -335,16 +345,12 @@ void DeviceBackUp::messageLoop()
         if(!handleRet){
             break;
         }
-        if(m_progress_finished){
-            break;
-        }
     }
 
 }
 
 bool DeviceBackUp::handleMessageOne(plist_t message, const char* dlmsg)
 {
-    emit logShow("处理中...");
     //1. 打印进度：先获取再打印
     setAndPrintOverallProgress(message, dlmsg);
     //2. 执行任务：先匹配再执行

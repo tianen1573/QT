@@ -8,15 +8,6 @@
 #include <QFile>
 #include <QSharedPointer>
 
-#include <libimobiledevice/libimobiledevice.h>
-#include <libimobiledevice/lockdown.h>
-#include <libimobiledevice/mobilebackup2.h>
-#include <libimobiledevice/notification_proxy.h>
-#include <libimobiledevice/afc.h>
-#include <libimobiledevice/installation_proxy.h>
-#include <libimobiledevice/sbservices.h>
-#include <libimobiledevice/diagnostics_relay.h>
-
 #include "Device.h"
 #include "Lockdownd.h"
 #include "NP.h"
@@ -34,7 +25,8 @@ class DeviceBackUp : public QObject
     Q_OBJECT
 public:
     explicit DeviceBackUp(QObject *parent = nullptr);
-    bool init();
+    bool initService();
+    void initVar();
     void clear();
     void backupThreadCallBack();
 private slots:
@@ -42,7 +34,7 @@ private slots:
     void stop(); // 结束备份
 signals:
     void logShow(const QString& str);
-    void backupInProgress();
+    void displayWarningDialog(const QString& name, const QString& desc);
     void backupCompleted();
     void setProgressBar(int p);
 private:
@@ -71,6 +63,7 @@ private:
     bool processMessage(plist_t message);
     void setAndPrintOverallProgress(plist_t message, const char * dlmsg);
 private:
+    // 服务或文件对象
     Device m_device;
     Lockdownd m_lockdown;
     NP m_notificationProxy;
@@ -78,32 +71,30 @@ private:
     uint64_t m_lockfile = 0;
     MobileBackUp2 m_mobilebackup2;
 
-    QString  m_udid = nullptr;
-    bool m_forceFullBackup = true;
-    QString m_backupPath = "D:/TestBackUp";
-    const char * backup_dir = "D:/TestBackUp";
-    bool m_quitFlag = false;
+    // 备份需要的变量
+    QString  m_udid; // udid
+    bool m_forceFullBackup; // 是否全量备份
+    bool m_willEncrypt; // 是否加密
+    QString m_backupPath = "D:/TestBackUp"; // 备份路径
+    char * backup_dir = "D:/TestBackUp"; // C指针形式
+    bool m_quitFlag = false; // 非正常退出标志(外部，内部)
+    bool m_progress_finished = false; // 正常退出
+    double m_overall_progress = 0.0f; // 整体进度
+
     std::thread * m_thread = nullptr;
 
-    bool m_willEncrypt = false;
+    // 备份过程中需要的变量
     QString m_oldPwd = "";
     QString m_newPwd = "";
-    double m_totalProgress = 0.0;
-    double m_blockProgress = 0.0;
-    int m_backupErrCode = 0;
-    uint64_t m_blockTotalSize = 0;
-    uint64_t m_blockRecvSize = 0;
-
-
     plist_t node_tmp = NULL;
+    int m_backupErrCode = 0;
     int errcode;
     char * errdesc;
     struct stat st;
     int result_code = -1;
     mobilebackup2_error_t err;
     uint64_t file_count = 0;
-    double m_overall_progress = 0.0f;
-    bool m_progress_finished = false;
+
 };
 
 #endif // DEVICEBACKUP_H

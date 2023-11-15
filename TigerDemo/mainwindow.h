@@ -19,6 +19,7 @@ public:
 private slots:
     void onUpdateTxt(const QString& txt);
     void onUpdateBar(int p);
+    void onDisplayWarningDialog(const QString& name, const QString& desc);
 private:
     QTextEdit* textEdit;
     Ui::MainWindow *ui;

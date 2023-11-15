@@ -16,7 +16,7 @@ public:
     explicit IdevicePair( QWidget *parent = nullptr);
 
 signals:
-
+    void displayWarningDialog(const QString& name, const QString& desc);
 private slots:
     void DevicePair();
 private:

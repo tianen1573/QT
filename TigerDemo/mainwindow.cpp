@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     IdeviceBackUp *bp = new IdeviceBackUp();
     DeviceBackUp *backup = new DeviceBackUp();
 
+    QObject::connect(pair, &IdevicePair::displayWarningDialog, this, &MainWindow::onDisplayWarningDialog);
     QObject::connect(bp, &IdeviceBackUp::updateBar, this, &MainWindow::onUpdateBar);
     QObject::connect(id, &IdeviceId::updateTxt, this, &MainWindow::onUpdateTxt);
     QObject::connect(ui->IdeviceIdPushBtn, SIGNAL(clicked()), id, SLOT(SelectId()));
@@ -46,5 +47,10 @@ void MainWindow::onUpdateBar(int p)
 {
     ui->progressBar->setValue(p);
     QCoreApplication::processEvents();
+}
+
+void MainWindow::onDisplayWarningDialog(const QString &name, const QString &desc)
+{
+    QMessageBox::information(this, name, desc);
 }
 

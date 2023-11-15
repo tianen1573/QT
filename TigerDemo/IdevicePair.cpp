@@ -56,5 +56,7 @@ leave:
     udid = NULL;
     client = NULL;
     device = NULL;
-    QMessageBox::information(this, "Pairing", strerr);
+
+    emit displayWarningDialog("Pair", strerr);
+//    QMessageBox::information(this, "Pairing", strerr);
 }
