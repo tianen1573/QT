@@ -25,8 +25,8 @@ public:
     virtual ~NP();
     np_client_t getNpClient() const;
 
-    np_error_t createNp(const Device& device, const lockdownd_service_descriptor_t service);
-    np_error_t freeNp();
+    np_error_t openNp(const Device& device, const lockdownd_service_descriptor_t service);
+    np_error_t closeNp();
     np_error_t observeNotifications();
     np_error_t postNotifications(const char *notification);
 private:

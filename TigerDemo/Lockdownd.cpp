@@ -16,23 +16,23 @@ lockdownd_client_t Lockdownd::getLockdownd()
     return m_lockdowndClient;
 }
 
-lockdownd_error_t Lockdownd::createLockdownd(const Device &device)
+lockdownd_error_t Lockdownd::openLockdownd(const Device &device)
 {
     if(m_lockdowndClient)
-        freeLockdownd();
+        closeLockdownd();
 
     return lockdownd_client_new(device.getIdevice(), &m_lockdowndClient, NULL);
 }
 
-lockdownd_error_t Lockdownd::createLockdowndWithHandshake(const Device &device)
+lockdownd_error_t Lockdownd::openLockdowndWithHandshake(const Device &device)
 {
     if(m_lockdowndClient)
-        freeLockdownd();
+        closeLockdownd();
 
     return lockdownd_client_new_with_handshake(device.getIdevice(), &m_lockdowndClient, NULL);
 }
 
-lockdownd_error_t Lockdownd::freeLockdownd()
+lockdownd_error_t Lockdownd::closeLockdownd()
 {
     auto errRet = lockdownd_client_free(m_lockdowndClient);
     m_lockdowndClient = nullptr;

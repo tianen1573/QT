@@ -634,6 +634,8 @@ void IdeviceBackUp::start()
     if(th == nullptr){
         FileToolsBackUp::quit_flag = 0;
         th = new std::thread(&IdeviceBackUp::BackUp,this);
+    } else{
+        // ;
     }
 }
 

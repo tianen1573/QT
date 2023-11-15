@@ -16,7 +16,6 @@
 #include <libimobiledevice/installation_proxy.h>
 #include <libimobiledevice/sbservices.h>
 #include <libimobiledevice/diagnostics_relay.h>
-#include <libimobiledevice-glue/utils.h>
 
 #include "Device.h"
 #include "Lockdownd.h"
@@ -35,16 +34,17 @@ class DeviceBackUp : public QObject
     Q_OBJECT
 public:
     explicit DeviceBackUp(QObject *parent = nullptr);
-
-    void start(); // 在一个线程上开启备份
-    void stop(); // 结束备份
     bool init();
     void clear();
     void backupThreadCallBack();
+private slots:
+    void start(); // 在一个线程上开启备份
+    void stop(); // 结束备份
 signals:
-
     void logShow(const QString& str);
-
+    void backupInProgress();
+    void backupCompleted();
+    void setProgressBar(int p);
 private:
     // 开启备份服务的流程
     bool connectDevice();
@@ -57,6 +57,19 @@ private:
     bool sendBackupRequest(bool isFullBackup = true);
     // 消息处理
     void messageLoop();
+    bool handleMessageOne(plist_t message, const char * dlmsg);
+    bool downloadFiles(plist_t message);
+    bool uploadFiles(plist_t message);
+    bool getFreeDiskSpace(plist_t message);
+    bool purgeDiskSpace(plist_t message);
+    bool contentsOfDirectory(plist_t message);
+    bool createDirectory(plist_t message);
+    bool moveFilesAndItems(plist_t message);
+    bool removeFilesAndItems(plist_t message);
+    bool copyItem(plist_t message);
+    bool disconnect(plist_t message);
+    bool processMessage(plist_t message);
+    void setAndPrintOverallProgress(plist_t message, const char * dlmsg);
 private:
     Device m_device;
     Lockdownd m_lockdown;
@@ -68,6 +81,7 @@ private:
     QString  m_udid = nullptr;
     bool m_forceFullBackup = true;
     QString m_backupPath = "D:/TestBackUp";
+    const char * backup_dir = "D:/TestBackUp";
     bool m_quitFlag = false;
     std::thread * m_thread = nullptr;
 
@@ -80,7 +94,16 @@ private:
     uint64_t m_blockTotalSize = 0;
     uint64_t m_blockRecvSize = 0;
 
-    bool m_isRetain = true;
+
+    plist_t node_tmp = NULL;
+    int errcode;
+    char * errdesc;
+    struct stat st;
+    int result_code = -1;
+    mobilebackup2_error_t err;
+    uint64_t file_count = 0;
+    double m_overall_progress = 0.0f;
+    bool m_progress_finished = false;
 };
 
 #endif // DEVICEBACKUP_H

@@ -1,7 +1,7 @@
 #include "NP.h"
 
 NP::NP(QObject *parent)
-    : QObject{parent}
+    : QObject{parent},m_npClient(nullptr)
 {
 
 }
@@ -16,10 +16,10 @@ np_client_t NP::getNpClient() const
     return m_npClient;
 }
 
-np_error_t NP::createNp(const Device &device, const lockdownd_service_descriptor_t service)
+np_error_t NP::openNp(const Device &device, const lockdownd_service_descriptor_t service)
 {
     if(m_npClient)
-        freeNp();
+        closeNp();
     auto errRet = np_client_new(device.getIdevice(), service, &m_npClient);
     if(NP_E_SUCCESS == errRet){
         np_set_notify_callback(m_npClient, NP::npCallback, this);
@@ -28,7 +28,7 @@ np_error_t NP::createNp(const Device &device, const lockdownd_service_descriptor
     return errRet;
 }
 
-np_error_t NP::freeNp()
+np_error_t NP::closeNp()
 {
     auto errRet = np_client_free(m_npClient);
     m_npClient = nullptr;

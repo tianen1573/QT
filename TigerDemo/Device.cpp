@@ -10,7 +10,8 @@ Device::Device(QObject *parent)
 
 Device::~Device()
 {
-
+    if(m_idevice != nullptr)
+        closeIdevice();
 }
 
 idevice_t Device::getIdevice() const
@@ -18,10 +19,10 @@ idevice_t Device::getIdevice() const
     return m_idevice;
 }
 
-idevice_error_t Device::createIdevice(const QString &udid)
+idevice_error_t Device::openIdevice(const QString &udid)
 {
     if(m_idevice)
-        freeIdevice();
+        closeIdevice();
     idevice_error_t errRet = IDEVICE_E_SUCCESS;
     if(udid.isEmpty())
         errRet = idevice_new(&m_idevice, NULL);
@@ -31,7 +32,7 @@ idevice_error_t Device::createIdevice(const QString &udid)
     return errRet;
 }
 
-idevice_error_t Device::createIdeviceWithOptions(const QString &udid, idevice_options options)
+idevice_error_t Device::openIdeviceWithOptions(const QString &udid, idevice_options options)
 {
     /*
      * IDEVICE_LOOKUP_NETWORK：通过网络查找可用的设备。
@@ -42,7 +43,7 @@ idevice_error_t Device::createIdeviceWithOptions(const QString &udid, idevice_op
     return idevice_new_with_options(&m_idevice, udid.toLocal8Bit(), options);
 }
 
-idevice_error_t Device::freeIdevice()
+idevice_error_t Device::closeIdevice()
 {
 
     auto errRet = idevice_free(m_idevice);
@@ -57,7 +58,7 @@ QString Device::getUdid()
     char * buff = nullptr;
     if(IDEVICE_E_SUCCESS == idevice_get_udid(m_idevice, &buff) && nullptr != buff)
     {
-        udid = QString::fromLocal8Bit(buff);
+        udid = QString::fromUtf8(buff);
         free(buff);
     }
 

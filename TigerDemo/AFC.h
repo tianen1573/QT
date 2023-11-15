@@ -18,8 +18,8 @@ public:
     virtual ~AFC();
     afc_client_t getAFC() const;
 
-    afc_error_t createAFC(const Device& device, const lockdownd_service_descriptor_t service);
-    afc_error_t freeAFC();
+    afc_error_t openAFC(const Device& device, const lockdownd_service_descriptor_t service);
+    afc_error_t closeAFC();
     afc_error_t openFile(const char* fileName, afc_file_mode_t fileMode, uint64_t* fileHandle);
     afc_error_t closeFile(uint64_t fileHandle);
     void readFile(const char *fileName, char **data, uint64_t *size);

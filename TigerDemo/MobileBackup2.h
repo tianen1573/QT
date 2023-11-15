@@ -20,9 +20,9 @@ class MobileBackUp2 : public QObject
 public:
     explicit MobileBackUp2(QObject *parent = nullptr);
     virtual ~MobileBackUp2();
-    mobilebackup2_client_t handle() const;
-    mobilebackup2_error_t createMbp2(const Device & device,const lockdownd_service_descriptor_t service);
-    mobilebackup2_error_t freeMbp2();
+    mobilebackup2_client_t getMbp2() const;
+    mobilebackup2_error_t openMbp2(const Device & device,const lockdownd_service_descriptor_t service);
+    mobilebackup2_error_t closeMbp2();
     mobilebackup2_error_t sendRaw(const char * data,uint32_t len,uint32_t *sent);
     mobilebackup2_error_t recvRaw(char * data,uint32_t len,uint32_t * rlen);
     mobilebackup2_error_t versionExchange(double local_versions[], char count, double *remote_version);

@@ -24,9 +24,9 @@ public:
     virtual ~Lockdownd();
     lockdownd_client_t getLockdownd();
 
-    lockdownd_error_t createLockdownd(const Device& device);
-    lockdownd_error_t createLockdowndWithHandshake(const Device& device);
-    lockdownd_error_t freeLockdownd();
+    lockdownd_error_t openLockdownd(const Device& device);
+    lockdownd_error_t openLockdowndWithHandshake(const Device& device);
+    lockdownd_error_t closeLockdownd();
     lockdownd_error_t pair();
     lockdownd_error_t getValue(const char* domain, const char* key, plist_t* nodeValue);
     lockdownd_error_t setValue(const char* domain, const char* key, plist_t nodeValue);

@@ -21,9 +21,9 @@ public:
     virtual ~Device();
     idevice_t getIdevice() const;
 
-    idevice_error_t createIdevice(const QString& udid = "");
-    idevice_error_t createIdeviceWithOptions(const QString& udid, idevice_options options);
-    idevice_error_t freeIdevice();
+    idevice_error_t openIdevice(const QString& udid = "");
+    idevice_error_t openIdeviceWithOptions(const QString& udid, idevice_options options);
+    idevice_error_t closeIdevice();
     QString getUdid();
 
 private:

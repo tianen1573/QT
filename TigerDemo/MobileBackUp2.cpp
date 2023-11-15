@@ -11,20 +11,20 @@ MobileBackUp2::~MobileBackUp2()
 
 }
 
-mobilebackup2_client_t MobileBackUp2::handle() const
+mobilebackup2_client_t MobileBackUp2::getMbp2() const
 {
     return m_mbp2;
 }
 
-mobilebackup2_error_t MobileBackUp2::createMbp2(const Device &device, const lockdownd_service_descriptor_t service)
+mobilebackup2_error_t MobileBackUp2::openMbp2(const Device &device, const lockdownd_service_descriptor_t service)
 {
     if(m_mbp2)
-        freeMbp2();
+        closeMbp2();
 
     return mobilebackup2_client_new(device.getIdevice(), service,&m_mbp2);
 }
 
-mobilebackup2_error_t MobileBackUp2::freeMbp2()
+mobilebackup2_error_t MobileBackUp2::closeMbp2()
 {
     auto errRet = mobilebackup2_client_free(m_mbp2);
     m_mbp2 = nullptr;

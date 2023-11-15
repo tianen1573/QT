@@ -16,15 +16,15 @@ afc_client_t AFC::getAFC() const
     return m_afc;
 }
 
-afc_error_t AFC::createAFC(const Device &device, const lockdownd_service_descriptor_t service)
+afc_error_t AFC::openAFC(const Device &device, const lockdownd_service_descriptor_t service)
 {
     if(m_afc)
-        freeAFC();
+        closeAFC();
 
     return afc_client_new(device.getIdevice(), service, &m_afc);
 }
 
-afc_error_t AFC::freeAFC()
+afc_error_t AFC::closeAFC()
 {
     auto errRet = afc_client_free(m_afc);
     m_afc = nullptr;
