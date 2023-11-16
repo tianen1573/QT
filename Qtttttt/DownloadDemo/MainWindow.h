@@ -15,12 +15,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-signals:
-    void UpdateProgress(int p);
-
 private slots:
-    void onUpdateOverallProgress(int p);
-    void onStartTest();
+    void onSetProgressBarVal(int p);
+    void onDisplayFinishedWidget(const QString& desc);
+    void onSetPushButtonEnabled(bool flag);
 private:
     Ui::MainWindow *ui;
 };

@@ -25,7 +25,7 @@ class DeviceBackUp : public QObject
     Q_OBJECT
 public:
     explicit DeviceBackUp(QObject *parent = nullptr);
-    bool initService();
+    bool init();
     void initVar();
     void clear();
     void backupThreadCallBack();

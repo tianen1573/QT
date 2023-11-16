@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,13 +16,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-signals:
-    void UpdateProgress(int p);
-
-private slots:
-    void onUpdateOverallProgress(int p);
-    void onStartTest();
 private:
     Ui::MainWindow *ui;
+
+private slots:
+    void onSetWidgetItem(const QStringList& sl);
 };
 #endif // MAINWINDOW_H

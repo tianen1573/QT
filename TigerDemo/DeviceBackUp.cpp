@@ -325,7 +325,7 @@ void DeviceBackUp::messageLoop()
     char *dlmsg = NULL;
     plist_t message = nullptr;
     // 异常退出 或 正常结束
-    while(!m_quitFlag || m_progress_finished)
+    while(!m_quitFlag)
     {
         dlmsg = nullptr;
         message = nullptr;
@@ -343,6 +343,7 @@ void DeviceBackUp::messageLoop()
         free(dlmsg);
         free(message);
         if(!handleRet){
+            // 因为收到progressMessage一定会返回假，则该循环一定会结束
             break;
         }
     }
@@ -697,7 +698,6 @@ void DeviceBackUp::setAndPrintOverallProgress(plist_t message, const char * dlms
             emit setProgressBar(m_overall_progress);
             if(m_overall_progress >= 100.0f){
                 m_progress_finished = true;
-                emit logShow("备份完成...");
             }
         }
     }

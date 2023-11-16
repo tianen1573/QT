@@ -372,12 +372,16 @@ BackupMaker {
     }
 
     start() {
+        // 启动线程
+        // 1. 允许启动两次吗？ 当备份服务已经在进行时，再次调用该函数，应该怎么办？
+        // 禁止调用；进行提示：备份服务进行中
         th = startThread(threadFunc)
     }
 
     stop() {
-        exitFlag = true
-        th.join();    
+        // 终止线程，主线程调用
+        exitFlag = true // 停止标志，让线程“正常退出” 
+        th.join();    // 阻塞等待
     }
 
     threadFunc() {
@@ -403,23 +407,22 @@ BackupMaker {
         emit onStop()
 
     }
-
-}
-
-
-mainthread.exec() {
-
-while(true) {
-    msg = getMessage()
-    dispathMessage(msg)
-}
-
 }
 ~~~
 
+### 场景4：进度条
+
+> 
+
+> 
+
+### 实例5：界面调整
+
+> 
 
 
-# Bug
+
+# deBug
 
 #### 在构造函数里设置样式不生效
 
@@ -464,6 +467,135 @@ while(true) {
 > ![image-20231106175040710](QtNote.assets/image-20231106175040710.png)
 >
 > 最大最小保证图片不能无限被所需扩大，而填充属性，则用来保证图片的正常比例。
+
+#### 移植问题
+
+> 尽量使用更“高级”的语言，依赖于语言自己实现的多版本控制。
+
+#### 字符编码与QT
+
+~~~C++
+Utils.h
+
+extern "C"
+void removeDir(const char * path);
+
+Utils.cpp
+
+#include <QDir>
+
+int removeDir(const char * path) {
+    QString str = QString::fromUTF8(path)
+    QDir dir(str)
+    return dir.removeRecursively()
+}
+
+
+
+main.c 
+
+
+#include "Utils.h"
+
+
+....
+
+const char * path ...
+int ret = removeDir(path) ..
+
+ANSI 字符集  2字节 2字节 2字节  GBK  GB2312
+
+Unicode [汉语段][日语段]  GBK18030
+
+Utf-8 3`4 字节 linux,mac,ios,android,web
+Utf16  双字节定长  UCS2 windows默认UTF编码
+Utf32
+    emojii
+
+WIDECHAE 字符集
+
+字符串 ANSI UCS2
+
+ReadFileA
+ReadFileW
+
+ansi UCS2/utf16
+_T("c:\\abcd")
+\
+
+#ifdef UNICODE
+    #define ReadFile  ReadFileW
+#else
+    #define ReadFile  ReadFileA
+#endif
+
+
+编译器定义 UNICODE IDE环境的默认参
+
+const char *
+const wchar_t *
+
+QT QDir QFile
+c/c++
+OS.api
+
+remove()
+return success failed
+
+c/c++ Unix
+
+errno
+
+if (-1 == RemoveFile(...)) {
+    err = GetLastError;
+    errcode = 0;
+    switch(err) {
+        case ERROR_FILE_NOT_FOUND:
+            errcode = -6;
+            errdesc = "cccc"
+            ..
+    }
+    
+}
+
+c std lib errno -> device error
+
+windows api last error code  -> device error
+
+QT
+
+
+// return c-styled errcode
+int RemoveDir(,,.) {
+
+    if (!pathExists(...)) {
+        return ENOENT
+    }
+
+    return 0;
+
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # [libimobiledevice](https://github.com/libimobiledevice/libimobiledevice)
 
@@ -1125,3 +1257,118 @@ lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
 > ![image-20231113000555836](QtNote.assets/image-20231113000555836.png)
 >
 > QFile的错误码没有errno那么详细，需要 测试对比
+
+# QNetWork
+
+## 准备工作
+
+添加组件
+
+> ![image-20231116110452092](QtNote.assets/image-20231116110452092.png)
+
+头文件
+
+> ~~~C++
+> #include <QtNetwork/QNetworkAccessManager>
+> #include <QtNetwork/QNetworkRequest>
+> #include <QtNetwork/QNetworkReply>
+> ~~~
+>
+> ![image-20231116110537188](QtNote.assets/image-20231116110537188.png)
+
+## QNetworkAccessManager
+
+## QNetworkRequest
+
+## QNetworkReply
+
+## 实例
+
+### 从url下载文件，并写入到本地文件中
+
+~~~C++
+//.h
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+private slots:
+    void onSetProgressBarVal(int p);
+    void onDisplayFinishedWidget(const QString& desc);
+    void onSetPushButtonEnabled(bool flag);
+private:
+    Ui::MainWindow *ui;
+};
+#endif // MAINWINDOW_H
+
+~~~
+
+~~~C++
+//.cpp
+#include "MainWindow.h"
+#include "ui_MainWindow.h"
+
+#include "NetWork.h"
+#include <QMessageBox>
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+    ui->progressBar->setRange(0, 100);
+    ui->progressBar->setValue(0);
+
+    NetWork* network = new NetWork;
+
+    connect(ui->pushButton, SIGNAL(clicked()), network, SLOT(onStartDownload()));
+    connect(network, &NetWork::setProgressBarVal, this, &MainWindow::onSetProgressBarVal);
+    connect(network, &NetWork::displayFinishedWidget, this, &MainWindow::onDisplayFinishedWidget);
+    connect(network, &NetWork::setPushButtonEnabled, this, &MainWindow::onSetPushButtonEnabled);
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::onSetProgressBarVal(int p)
+{
+    ui->progressBar->setValue(p);
+    QCoreApplication::processEvents();
+}
+
+void MainWindow::onDisplayFinishedWidget(const QString &desc)
+{
+    QMessageBox::information(this,"Finished", desc);
+}
+
+void MainWindow::onSetPushButtonEnabled(bool flag)
+{
+    ui->pushButton->setEnabled(flag);
+}
+
+~~~
+
+# QFileAndQDir
+
+> 文件IO类
+
+## QFile
+
+## QDir
+
+## 实例
