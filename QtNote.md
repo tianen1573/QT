@@ -1,6 +1,36 @@
-**信号与槽**
+# QT Creator
 
-**内存管理方式**
+> 1. **常规操作：**
+>    - 打开新文件：Ctrl + N
+>    - 打开项目：Ctrl + O
+>    - 保存：Ctrl + S
+>    - 撤销：Ctrl + Z
+>    - 重做：Ctrl + Y
+>    - 剪切：Ctrl + X
+>    - 复制：Ctrl + C
+>    - 粘贴：Ctrl + V
+>    - 查找：Ctrl + F
+>    - 替换：Ctrl + R
+> 2. **编译和运行：**
+>    - 编译：Ctrl + B
+>    - 构建所有：Ctrl + Shift + B
+>    - 运行：Ctrl + R
+>    - 调试：F5
+>    - 停止：Ctrl + Shift + F5
+> 3. **代码导航：**
+>    - 转到定义：F2
+>    - 转到声明：F3
+>    - 转到实现：F4
+>    - 在当前文件中查找使用：Ctrl + Shift + F7
+>    - 在项目中查找使用：Ctrl + F7
+>    - 转到上一个/下一个光标位置：Alt + 左/右箭头
+> 4. **窗口切换：**
+>    - 切换编辑器和项目栏：Alt + 左箭头
+>    - 切换编辑器和输出栏：Alt + 右箭头
+>    - 切换编辑器和调试栏：Alt + 上箭头
+> 5. **版本控制：**
+>    - 打开版本控制操作：Alt + 0
+>    - 查看版本控制输出：Alt + 2
 
 # 基础
 
@@ -1372,3 +1402,260 @@ void MainWindow::onSetPushButtonEnabled(bool flag)
 ## QDir
 
 ## 实例
+
+# QSql
+
+## QSqlDatabase
+
+##QSqlQuery
+##QVariant
+
+> ![image-20231117092739057](QtNote.assets/image-20231117092739057.png)
+
+## 实例
+
+### 增删改查
+
+~~~C++
+//.h
+#ifndef SQL_H
+#define SQL_H
+
+#include <QObject>
+#include <QSqlDatabase>
+#include <QStringList>
+#include <QString>
+#include <QDebug>
+#include <QSqlQuery>
+class Sql : public QObject
+{
+    Q_OBJECT
+public:
+    explicit Sql(QObject *parent = nullptr);
+    virtual ~Sql();
+    bool connectDatabase();
+    void closeDatabase();
+private:
+    void bindVal(const QStringList& sl);
+private slots:
+    void querySql(const QStringList& sl);
+    void insertSql(const QStringList& sl);
+    void deleteSql(const QStringList& sl);
+    void modify(const QStringList& sl);
+signals:
+    void initTableWidget();
+    void setWidgetItem(const QStringList& sl);
+private:
+     QSqlDatabase m_db = QSqlDatabase::addDatabase("QSQLITE");
+     QString m_databaseName = QString("C:\\Users\\qlz\\Desktop\\test.db");
+     QSqlQuery m_query;
+     bool m_connectDatabaseFlag = false;
+
+     QStringList descList = {"ID", "NAME", "PWD", "BIR"};
+     QStringList valList = {":id", ":name", ":pwd", ":bir"};
+};
+
+#endif // SQL_H
+
+~~~
+
+~~~C++
+//.cpp
+#include "Sql.h"
+
+#include <QVariant>
+#include <QSqlError>
+#include <QDate>
+#include <QList>
+Sql::Sql(QObject *parent)
+    : QObject{parent}
+{
+
+}
+
+Sql::~Sql()
+{
+    closeDatabase();
+}
+
+bool Sql::connectDatabase()
+{
+    if(!m_connectDatabaseFlag){
+        m_db.setDatabaseName(m_databaseName);
+        m_connectDatabaseFlag = m_db.open();
+    }
+
+    return m_connectDatabaseFlag;
+}
+
+void Sql::closeDatabase()
+{
+    m_db.close();
+    m_connectDatabaseFlag = false;
+}
+
+void Sql::bindVal(const QStringList &sl)
+{
+    for(int i = 0; i < 4; ++ i){
+        if(!sl[i].isEmpty()){
+            m_query.bindValue(valList[i], sl[i]);
+        }
+    }
+}
+
+void Sql::querySql(const QStringList& sl)
+{
+    if(!connectDatabase()){
+        qDebug() << m_db.lastError().text();
+    } else{
+
+        QString condition = "WHERE ";
+        bool first = false;
+        for(int i = 0; i < 4; ++ i){
+            if(!sl[i].isEmpty()){
+               condition += descList[i] + " = " + valList[i];
+               if(first && i < 3){
+                   condition += " and ";
+               }
+               if(!first){
+                   first = true;
+               }
+            }
+        }
+
+        QString queryQuery = "SELECT * FROM users ";
+        if(first){
+            queryQuery += condition;
+        }
+        m_query.prepare(queryQuery);
+        bindVal(sl);
+
+
+        if(m_query.exec()) {
+            int cnt = 0;
+            while(m_query.next() && cnt < 100) {
+                QStringList ssl;
+                ssl.append(m_query.value(0).toString());
+                ssl.append(m_query.value(1).toString());
+                ssl.append(m_query.value(2).toString());
+                ssl.append(m_query.value(3).toString());
+                ++ cnt;
+                emit setWidgetItem(ssl);
+            }
+        } else{
+            qDebug() << m_query.lastError().text();
+        }
+    }
+    m_query.clear();
+}
+
+void Sql::insertSql(const QStringList& sl)
+{
+    if(!connectDatabase()){
+        qDebug() << m_db.lastError().text();
+    } else{
+
+        QString desc = "(";
+        QString values = "VALUES (";
+        for(int i = 0; i < 4; ++ i){
+            if(!sl[i].isEmpty()){
+                desc += descList[i] + ',';
+                values += valList[i] + ',';
+            }
+        }
+        desc[desc.length() - 1] = ')';
+        values[values.length() - 1] = ')';
+
+        QString insertQuery = "INSERT INTO users " + desc + values;
+        m_query.prepare(insertQuery);
+        bindVal(sl);
+
+        if(m_query.exec()){
+            qDebug() << "OK";
+        } else {
+            qDebug() << m_query.lastError().text();
+        }
+    }
+    m_query.clear();
+}
+
+void Sql::deleteSql(const QStringList& sl)
+{
+    if(!connectDatabase()){
+        qDebug() << m_db.lastError().text();
+    } else {
+
+        QString condition = "WHERE ";
+        bool first = false;
+        for(int i = 0; i < 4; ++ i){
+            if(!sl[i].isEmpty()){
+                if(first){
+                    condition += " and ";
+                }
+               condition += descList[i] + " = " + valList[i];
+               if(!first){
+                   first = true;
+               }
+            }
+        }
+
+        QString deleteQuery = "DELETE FROM users ";
+        if(first){
+            deleteQuery += condition;
+        }
+        m_query.prepare(deleteQuery);
+        bindVal(sl);
+
+        if(m_query.exec()){
+            qDebug() << "Delete Ok.\n";
+        } else {
+            qDebug() << m_query.lastError().text();
+        }
+    }
+    m_query.clear();
+}
+
+void Sql::modify(const QStringList& sl)
+{
+    if(!connectDatabase()){
+        qDebug() << m_db.lastError().text();
+    } else {
+
+        if(sl[0].isEmpty()){
+            qDebug() << "The ID does not exist";
+            return ;
+        }
+
+        QString condition = "";
+        bool first = false;
+        for(int i = 1; i < 4; ++ i){
+            if(!sl[i].isEmpty()){
+               if(first){
+                   condition += ", ";
+               }
+               condition += descList[i] + " = " + valList[i];
+
+               if(!first){
+                   first = true;
+               }
+            }
+        }
+        if(!first){
+            qDebug() << "Nothing has been updated";
+            return ;
+        }
+
+        QString updateQuery = "UPDATE users SET " + condition + " WHERE ID = :id";
+        m_query.prepare(updateQuery);
+        bindVal(sl);
+        if(m_query.exec()){
+            qDebug() << "Modify Ok.\n";
+        } else {
+            qDebug() << m_query.lastError().text();
+        }
+    }
+    m_query.clear();
+}
+
+~~~
+

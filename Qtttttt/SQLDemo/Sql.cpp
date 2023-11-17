@@ -1,7 +1,10 @@
+//.cpp
 #include "Sql.h"
 
-#include <QSqlQuery>
 #include <QVariant>
+#include <QSqlError>
+#include <QDate>
+#include <QList>
 Sql::Sql(QObject *parent)
     : QObject{parent}
 {
@@ -29,44 +32,165 @@ void Sql::closeDatabase()
     m_connectDatabaseFlag = false;
 }
 
-void Sql::querySql()
+void Sql::bindVal(const QStringList &sl)
 {
-    if(!connectDatabase()){
-        int k = 0;
-//        QMessageBox::information(this, "Error", "Failed to connect to database");
-    } else{
-        QSqlQuery query;
-        if(query.exec("SELECT Z_PK, Z_OPT, ZTRASHEDDATE, ZUUID FROM ZASSET")) {
-            int cnt = 0;
-            while(query.next() && cnt < 100) {
-                QStringList sl;
-                sl.append(query.value(0).toString());
-                sl.append(query.value(1).toString());
-                sl.append(query.value(2).toString());
-                sl.append(query.value(3).toString());
-                ++ cnt;
-                emit setWidgetItem(sl);
-            }
-            query.clear();
-        } else{
-            ;//
+    for(int i = 0; i < 4; ++ i){
+        if(!sl[i].isEmpty()){
+            m_query.bindValue(valList[i], sl[i]);
         }
     }
 }
 
-void Sql::insertSql()
+void Sql::querySql(const QStringList& sl)
 {
-    QSqlQuery query;
-//    QString sql = "INSERT INTO ZASSET values(1, )"
+    if(!connectDatabase()){
+        qDebug() << m_db.lastError().text();
+    } else{
+
+        QString condition = "WHERE ";
+        bool first = false;
+        for(int i = 0; i < 4; ++ i){
+            if(!sl[i].isEmpty()){
+               condition += descList[i] + " = " + valList[i];
+               if(first && i < 3){
+                   condition += " and ";
+               }
+               if(!first){
+                   first = true;
+               }
+            }
+        }
+
+        QString queryQuery = "SELECT * FROM users ";
+        if(first){
+            queryQuery += condition;
+        }
+        m_query.prepare(queryQuery);
+        bindVal(sl);
+
+
+        if(m_query.exec()) {
+            int cnt = 0;
+            while(m_query.next() && cnt < 100) {
+                QStringList ssl;
+                ssl.append(m_query.value(0).toString());
+                ssl.append(m_query.value(1).toString());
+                ssl.append(m_query.value(2).toString());
+                ssl.append(m_query.value(3).toString());
+                ++ cnt;
+                emit setWidgetItem(ssl);
+            }
+        } else{
+            qDebug() << m_query.lastError().text();
+        }
+    }
+    m_query.clear();
 }
 
-void Sql::deleteSql(const QString& key)
+void Sql::insertSql(const QStringList& sl)
 {
-    QSqlQuery query;
-    QString sql = "DELETE FROM ZASSET WHERE O_PK = " + key;
-    if(query.exec(sql)){
-        qDebug() << "Delete Ok.\n";
-    } else {
-        qDebug() << "Delete Fail.\n";
+    if(!connectDatabase()){
+        qDebug() << m_db.lastError().text();
+    } else{
+
+        QString desc = "(";
+        QString values = "VALUES (";
+        for(int i = 0; i < 4; ++ i){
+            if(!sl[i].isEmpty()){
+                desc += descList[i] + ',';
+                values += valList[i] + ',';
+            }
+        }
+        desc[desc.length() - 1] = ')';
+        values[values.length() - 1] = ')';
+
+        QString insertQuery = "INSERT INTO users " + desc + values;
+        m_query.prepare(insertQuery);
+        bindVal(sl);
+
+        if(m_query.exec()){
+            qDebug() << "OK";
+        } else {
+            qDebug() << m_query.lastError().text();
+        }
     }
+    m_query.clear();
+}
+
+void Sql::deleteSql(const QStringList& sl)
+{
+    if(!connectDatabase()){
+        qDebug() << m_db.lastError().text();
+    } else {
+
+        QString condition = "WHERE ";
+        bool first = false;
+        for(int i = 0; i < 4; ++ i){
+            if(!sl[i].isEmpty()){
+                if(first){
+                    condition += " and ";
+                }
+               condition += descList[i] + " = " + valList[i];
+               if(!first){
+                   first = true;
+               }
+            }
+        }
+
+        QString deleteQuery = "DELETE FROM users ";
+        if(first){
+            deleteQuery += condition;
+        }
+        m_query.prepare(deleteQuery);
+        bindVal(sl);
+
+        if(m_query.exec()){
+            qDebug() << "Delete Ok.\n";
+        } else {
+            qDebug() << m_query.lastError().text();
+        }
+    }
+    m_query.clear();
+}
+
+void Sql::modify(const QStringList& sl)
+{
+    if(!connectDatabase()){
+        qDebug() << m_db.lastError().text();
+    } else {
+
+        if(sl[0].isEmpty()){
+            qDebug() << "The ID does not exist";
+            return ;
+        }
+
+        QString condition = "";
+        bool first = false;
+        for(int i = 1; i < 4; ++ i){
+            if(!sl[i].isEmpty()){
+               if(first){
+                   condition += ", ";
+               }
+               condition += descList[i] + " = " + valList[i];
+
+               if(!first){
+                   first = true;
+               }
+            }
+        }
+        if(!first){
+            qDebug() << "Nothing has been updated";
+            return ;
+        }
+
+        QString updateQuery = "UPDATE users SET " + condition + " WHERE ID = :id";
+        m_query.prepare(updateQuery);
+        bindVal(sl);
+        if(m_query.exec()){
+            qDebug() << "Modify Ok.\n";
+        } else {
+            qDebug() << m_query.lastError().text();
+        }
+    }
+    m_query.clear();
 }
