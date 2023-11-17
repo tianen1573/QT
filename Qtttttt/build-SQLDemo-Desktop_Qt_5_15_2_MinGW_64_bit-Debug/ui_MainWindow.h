@@ -13,9 +13,11 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QTableWidget>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -25,24 +27,42 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
-    QVBoxLayout *verticalLayout;
+    QVBoxLayout *verticalLayout_5;
     QWidget *widget;
     QHBoxLayout *horizontalLayout;
     QPushButton *pushButtonQuery;
     QPushButton *pushButtonModify;
     QPushButton *pushButtonInsert;
     QPushButton *pushButtonDelete;
+    QWidget *widget_3;
+    QHBoxLayout *horizontalLayout_2;
+    QWidget *widget_4;
+    QVBoxLayout *verticalLayout_2;
+    QLabel *label_2;
+    QTextEdit *textEditID;
+    QWidget *widget_2;
+    QVBoxLayout *verticalLayout;
+    QLabel *label;
+    QTextEdit *textEditNAME;
+    QWidget *widget_5;
+    QVBoxLayout *verticalLayout_3;
+    QLabel *label_3;
+    QTextEdit *textEditPWD;
+    QWidget *widget_6;
+    QVBoxLayouttextEditBIRLayout_4;
+    QLabel *label_4;
+    QTextEdit *textEdit_4;
     QTableWidget *tableWidget;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1062, 639);
+        MainWindow->resize(1115, 597);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        verticalLayout = new QVBoxLayout(centralwidget);
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout_5 = new QVBoxLayout(centralwidget);
+        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
         widget = new QWidget(centralwidget);
         widget->setObjectName(QString::fromUtf8("widget"));
         horizontalLayout = new QHBoxLayout(widget);
@@ -68,7 +88,119 @@ public:
         horizontalLayout->addWidget(pushButtonDelete);
 
 
-        verticalLayout->addWidget(widget);
+        verticalLayout_5->addWidget(widget);
+
+        widget_3 = new QWidget(centralwidget);
+        widget_3->setObjectName(QString::fromUtf8("widget_3"));
+        widget_3->setMinimumSize(QSize(0, 50));
+        widget_3->setMaximumSize(QSize(16777215, 70));
+        horizontalLayout_2 = new QHBoxLayout(widget_3);
+        horizontalLayout_2->setSpacing(0);
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        widget_4 = new QWidget(widget_3);
+        widget_4->setObjectName(QString::fromUtf8("widget_4"));
+        widget_4->setMinimumSize(QSize(0, 50));
+        widget_4->setMaximumSize(QSize(16777215, 70));
+        verticalLayout_2 = new QVBoxLayout(widget_4);
+        verticalLayout_2->setSpacing(0);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setContentsMargins(0, 0, -1, 0);
+        label_2 = new QLabel(widget_4);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setMaximumSize(QSize(16777215, 20));
+        label_2->setStyleSheet(QString::fromUtf8("font: 700 10pt \"Microsoft YaHei UI\";"));
+
+        verticalLayout_2->addWidget(label_2);
+
+        textEditID = new QTextEdit(widget_4);
+        textEditID->setObjectName(QString::fromUtf8("textEditID"));
+        textEditID->setMinimumSize(QSize(0, 50));
+        textEditID->setMaximumSize(QSize(16777215, 50));
+
+        verticalLayout_2->addWidget(textEditID);
+
+
+        horizontalLayout_2->addWidget(widget_4);
+
+        widget_2 = new QWidget(widget_3);
+        widget_2->setObjectName(QString::fromUtf8("widget_2"));
+        widget_2->setMinimumSize(QSize(0, 50));
+        widget_2->setMaximumSize(QSize(16777215, 70));
+        verticalLayout = new QVBoxLayout(widget_2);
+        verticalLayout->setSpacing(0);
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setContentsMargins(0, 0, -1, 0);
+        label = new QLabel(widget_2);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setMaximumSize(QSize(16777215, 20));
+        label->setStyleSheet(QString::fromUtf8("font: 700 10pt \"Microsoft YaHei UI\";"));
+
+        verticalLayout->addWidget(label);
+
+        textEditNAME = new QTextEdit(widget_2);
+        textEditNAME->setObjectName(QString::fromUtf8("textEditNAME"));
+        textEditNAME->setMinimumSize(QSize(0, 50));
+        textEditNAME->setMaximumSize(QSize(16777215, 50));
+
+        verticalLayout->addWidget(textEditNAME);
+
+
+        horizontalLayout_2->addWidget(widget_2);
+
+        widget_5 = new QWidget(widget_3);
+        widget_5->setObjectName(QString::fromUtf8("widget_5"));
+        widget_5->setMinimumSize(QSize(0, 50));
+        widget_5->setMaximumSize(QSize(16777215, 70));
+        verticalLayout_3 = new QVBoxLayout(widget_5);
+        verticalLayout_3->setSpacing(0);
+        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+        verticalLayout_3->setContentsMargins(0, 0, -1, 0);
+        label_3 = new QLabel(widget_5);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+        label_3->setMaximumSize(QSize(16777215, 20));
+        label_3->setStyleSheet(QString::fromUtf8("font: 700 10pt \"Microsoft YaHei UI\";"));
+
+        verticalLayout_3->addWidget(label_3);
+
+        textEditPWD = new QTextEdit(widget_5);
+        textEditPWD->setObjectName(QString::fromUtf8("textEditPWD"));
+        textEditPWD->setMinimumSize(QSize(0, 50));
+        textEditPWD->setMaximumSize(QSize(16777215, 50));
+
+        verticalLayout_3->addWidget(textEditPWD);
+
+
+        horizontalLayout_2->addWidget(widget_5);
+
+        widget_6 = new QWidget(widget_3);
+        widget_6->setObjectName(QString::fromUtf8("widget_6"));
+        widget_6->setMinimumSize(QSize(0, 50));
+        widget_6->setMaximumSize(QSize(16777215, 70));
+        verticalLayout_4 = new QVBoxLayout(widget_6);
+        verticalLayout_4->setSpacing(0);
+        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        verticalLayout_4->setContentsMargins(0, 0, -1, 0);
+        label_4 = new QLabel(widget_6);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+        label_4->setMinimumSize(QSize(0, 20));
+        label_4->setMaximumSize(QSize(16777215, 20));
+        label_4->setStyleSheet(QString::fromUtf8("font: 700 10pt \"Microsoft YaHei UI\";"));
+
+        textEditBIRyout_4->addWidget(label_4);
+
+       tetextEditBIR = new QTextEdit(widget_6);
+        textEditBIR->setObjectName(QString::fromUtf8("textEdit_4"));
+        textEdit_4->setMinimumSize(QSize(0, 50));
+        textEdit_4->setMaximumSize(QtextEditBIR215, 50));
+
+        verticalLayout_4->addWidget(textEdit_4);
+
+
+        horizontalLayout_2->addWidget(widget_6);
+
+
+        verticalLayout_5->addWidget(widget_3);
 
         tableWidget = new QTableWidget(centralwidget);
         if (tableWidget->columnCount() < 4)
@@ -83,7 +215,7 @@ public:
         tableWidget->setHorizontalHeaderItem(3, __qtablewidgetitem3);
         tableWidget->setObjectName(QString::fromUtf8("tableWidget"));
 
-        verticalLayout->addWidget(tableWidget);
+        verticalLayout_5->addWidget(tableWidget);
 
         MainWindow->setCentralWidget(centralwidget);
 
@@ -99,14 +231,18 @@ public:
         pushButtonModify->setText(QCoreApplication::translate("MainWindow", "\344\277\256\346\224\271", nullptr));
         pushButtonInsert->setText(QCoreApplication::translate("MainWindow", "\346\226\260\345\242\236", nullptr));
         pushButtonDelete->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "NAME", nullptr));
+        label_3->setText(QCoreApplication::translate("MainWindow", "PWD", nullptr));
+        label_4->setText(QCoreApplication::translate("MainWindow", "BIR: yyyy-mm-dd", nullptr));
         QTableWidgetItem *___qtablewidgetitem = tableWidget->horizontalHeaderItem(0);
-        ___qtablewidgetitem->setText(QCoreApplication::translate("MainWindow", "pKey", nullptr));
+        ___qtablewidgetitem->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
         QTableWidgetItem *___qtablewidgetitem1 = tableWidget->horizontalHeaderItem(1);
-        ___qtablewidgetitem1->setText(QCoreApplication::translate("MainWindow", "OPT", nullptr));
+        ___qtablewidgetitem1->setText(QCoreApplication::translate("MainWindow", "NAME", nullptr));
         QTableWidgetItem *___qtablewidgetitem2 = tableWidget->horizontalHeaderItem(2);
-        ___qtablewidgetitem2->setText(QCoreApplication::translate("MainWindow", "Date", nullptr));
+        ___qtablewidgetitem2->setText(QCoreApplication::translate("MainWindow", "PWD", nullptr));
         QTableWidgetItem *___qtablewidgetitem3 = tableWidget->horizontalHeaderItem(3);
-        ___qtablewidgetitem3->setText(QCoreApplication::translate("MainWindow", "UID", nullptr));
+        ___qtablewidgetitem3->setText(QCoreApplication::translate("MainWindow", "BIR", nullptr));
     } // retranslateUi
 
 };

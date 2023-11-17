@@ -32,6 +32,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::readTextEdit(QStringList &sl)
+{
+    sl.append(ui->textEditID->toPlainText());
+    sl.append(ui->textEditNAME->toPlainText());
+    sl.append(ui->textEditPWD->toPlainText());
+    sl.append(ui->textEditBIR->toPlainText());
+}
+
 void MainWindow::onSetWidgetItem(const QStringList &sl)
 {
     int rowCount = ui->tableWidget->rowCount();
@@ -39,6 +47,16 @@ void MainWindow::onSetWidgetItem(const QStringList &sl)
     for(int i = 0; i < sl.length(); ++ i){
         ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem(sl.at(i)));
     }
+
+}
+
+void MainWindow::onQuerySqlAndInitWidget()
+{
+    ui->tableWidget->setRowCount(0);
+
+    QString sl;
+    readTextEdit(sl);
+
 
 }
 

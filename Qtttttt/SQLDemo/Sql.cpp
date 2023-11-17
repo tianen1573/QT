@@ -153,7 +153,7 @@ void Sql::deleteSql(const QStringList& sl)
     m_query.clear();
 }
 
-void Sql::modify(const QStringList& sl)
+void Sql::modifySql(const QStringList& sl)
 {
     if(!connectDatabase()){
         qDebug() << m_db.lastError().text();

@@ -17,9 +17,19 @@ public:
     ~MainWindow();
 
 private:
+    void readTextEdit(const QStringList& sl);
+private:
     Ui::MainWindow *ui;
-
+signals:
+    void querySql(const QStringList & sl);
+    void deleteSql(const QStringList & sl);
+    void modifySql(const QStringList & sl);
+    void insertSql(const QStringList & sl);
 private slots:
     void onSetWidgetItem(const QStringList& sl);
+    void onQuerySqlAndInitWidget();
+    void onDeleteSql();
+    void onModifySql();
+    void onInsert();
 };
 #endif // MAINWINDOW_H

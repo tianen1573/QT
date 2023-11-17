@@ -22,9 +22,8 @@ private slots:
     void querySql(const QStringList& sl);
     void insertSql(const QStringList& sl);
     void deleteSql(const QStringList& sl);
-    void modify(const QStringList& sl);
+    void modifySql(const QStringList& sl);
 signals:
-    void initTableWidget();
     void setWidgetItem(const QStringList& sl);
 private:
      QSqlDatabase m_db = QSqlDatabase::addDatabase("QSQLITE");
