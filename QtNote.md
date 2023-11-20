@@ -442,9 +442,13 @@ BackupMaker {
 
 ### 场景4：进度条
 
-> 
+> 设置范围最大值/最小值
+>
+> 设置当前值、重置为默认值
+>
+> 进度条文本相关设置：样式，对齐，是否显示等
 
-> 
+> 通常是业务逻辑处理后获取进度，触发信号告知对应槽函数当前进度，槽函数再去设置进度条进度
 
 ### 实例5：界面调整
 
@@ -607,9 +611,28 @@ int RemoveDir(,,.) {
 }
 ~~~
 
+#### 槽函数为lambda表达式时
 
-
-
+> 因为信号与槽是异步的，触发信号并不代表槽函数立马执行，在适当的时候进行调用。如果槽函数为lambda表达式，那么就可能需要捕获上下文数据，如果被捕获到的数据在槽函数执行时，其声明周期已经结束了，就有可能造成内存泄漏的问题，因为变量所在的内存已经归还了，对该变量进行操作就是违法的。
+>
+> 如：
+>
+> ~~~C++
+> {
+> TestClass *a = new();
+> 
+> connect(..., ..., [&](){
+>     ...;
+>     a->func();
+>     ...;
+>     delete a;
+> });
+> }
+> ~~~
+>
+> 那么，在执行到lambda表达式时，函数已经结束把栈释放了，虽然a指向的空间存在，但a是不存在。引用传参，会找到对应的内存，当找到a原先的位置时，因为该内存已经归还了，再对其进行操作就是非法的野指针访问。
+>
+> ![image-20231120232507946](%E5%9B%BE%E7%89%87/QtNote/image-20231120232507946.png)
 
 
 
@@ -1282,17 +1305,11 @@ lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
 > !isEmpty(target.path): INSTALLS += target
 > ~~~
 
-### 未解决
-
-> ![image-20231113000555836](QtNote.assets/image-20231113000555836.png)
->
-> QFile的错误码没有errno那么详细，需要 测试对比
-
 # QNetWork
 
-## 准备工作
+## 初识
 
-添加组件
+**组件+头文件**
 
 > ![image-20231116110452092](QtNote.assets/image-20231116110452092.png)
 
@@ -1306,11 +1323,35 @@ lockdownd_client_new_with_handshake(device, &client, TOOL_NAME);
 >
 > ![image-20231116110537188](QtNote.assets/image-20231116110537188.png)
 
-## QNetworkAccessManager
+**QNetworkAccessManager**
 
-## QNetworkRequest
+> 可用于进行https、tcp、udp等网络通信，通常用于http/https，对于tcp/udp有更底层的相关类。
 
-## QNetworkReply
+**QNetworkRequest**
+
+> 根据不同的协议设置并填充请求报头内容
+
+**QNetworkReply**
+
+> 通常作为指针变量接收QNetworkAccessManager发送网络请求时返回的QNetworkReply指针，该指针不需要手动释放，但通常会调用deleteLater()方法“安全地”删除对象，避免在当前上下文中直接删除可能导致的悬空指针问题。
+>
+> 可以通过Reply对象读取响应报文，既可以只读取有效载荷，也可以读取其他信息，如报头，状态行等。
+
+**信号与槽**
+
+> 在通信完成后，会触发Reply对象的finished信号，通常会给该信号绑定一个函数，用于进行通信结束后的动作。
+
+> 在通信过程中，有上传和下载两者行为，Reply也会触发相关信号用于告知当前进度，可通过绑定槽函数的方式“实时”获取进度。
+
+**基本步骤**
+
+> 创建QNetworkRequest对象，填充请求报头。
+>
+> 创建QNetworkAccessManager对象，选择请求方式进行通信
+>
+> 创建QNetworkReply指针对象，接收QNetworkAccessManager的返回值
+>
+> 关联槽函数，进行业务处理
 
 ## 实例
 
@@ -1347,49 +1388,71 @@ private:
 ~~~
 
 ~~~C++
-//.cpp
-#include "MainWindow.h"
-#include "ui_MainWindow.h"
-
 #include "NetWork.h"
-#include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+#include <QString>
+#include <QFile>
+#include <QUrl>
+#include <QNetworkReply>
+#include <QDebug>
+
+NetWork::NetWork(QObject *parent)
+    : QObject{parent}
 {
-    ui->setupUi(this);
-    ui->progressBar->setRange(0, 100);
-    ui->progressBar->setValue(0);
 
-    NetWork* network = new NetWork;
-
-    connect(ui->pushButton, SIGNAL(clicked()), network, SLOT(onStartDownload()));
-    connect(network, &NetWork::setProgressBarVal, this, &MainWindow::onSetProgressBarVal);
-    connect(network, &NetWork::displayFinishedWidget, this, &MainWindow::onDisplayFinishedWidget);
-    connect(network, &NetWork::setPushButtonEnabled, this, &MainWindow::onSetPushButtonEnabled);
 }
 
-MainWindow::~MainWindow()
+NetWork::~NetWork()
 {
-    delete ui;
+
 }
 
-void MainWindow::onSetProgressBarVal(int p)
+void NetWork::onStartDownload()
 {
-    ui->progressBar->setValue(p);
-    QCoreApplication::processEvents();
+
+    emit setPushButtonEnabled(false);
+    m_request.setUrl(QUrl("https://dldir1.qq.com/qqfile/qq/PCQQ9.7.1/QQ9.7.1.28940.exe"));
+//    m_request.setUrl(QUrl("https://d1.music.126.net/dmusic/NeteaseCloudMusic_Music_official_2.10.12.201849_32.exe"));
+    m_reply = m_manager.get(m_request);
+
+    connect(m_reply, &QNetworkReply::finished, [=](){
+       if(m_reply->error() == QNetworkReply::NoError){
+            QByteArray response = m_reply->readAll();
+            qDebug() << response.length();
+            QFile file("C:/Users/qlz/Desktop/DDD.exe");
+            if(file.open(QIODevice::WriteOnly)) {
+                file.write(response, response.length());
+                file.close();
+
+                emit displayFinishedWidget("Download completed: Path is C:/Users/qlz/Desktop.");
+            }
+        } else {
+            emit displayFinishedWidget("Error: " + m_reply->errorString());
+        }
+
+        m_reply->deleteLater();
+        m_reply = nullptr;
+        emit setPushButtonEnabled(true);
+    });
+    connect(m_reply, &QNetworkReply::downloadProgress, [&](qint64 bytesReceived, qint64 bytesTotal){
+        int p = 0;
+        if(bytesTotal > 0)
+            p = (double)((double)bytesReceived / (double)bytesTotal) * 100.0; // c++类型转换
+        qDebug() << p;
+        emit setProgressBarVal(p);
+    });
+
+
+    return;
 }
 
-void MainWindow::onDisplayFinishedWidget(const QString &desc)
+void NetWork::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
-    QMessageBox::information(this,"Finished", desc);
+    int p = (int)(bytesReceived / bytesTotal) * 100; // c++类型转换
+    emit setProgressBarVal(p);
 }
 
-void MainWindow::onSetPushButtonEnabled(bool flag)
-{
-    ui->pushButton->setEnabled(flag);
-}
+
 
 ~~~
 
@@ -1405,12 +1468,33 @@ void MainWindow::onSetPushButtonEnabled(bool flag)
 
 # QSql
 
-## QSqlDatabase
+**QSqlDatabase**
 
-##QSqlQuery
-##QVariant
+> QSql支持多种数据库，所以需要使用**QSqlDatabase::addDatabase()**方法创建并配置数据库驱动，如"QSQLITE"、"QMYSQL"、"QODBC" 等。
+>
+> 可以通过上述方法的第二个形参指定需要打开的数据库，也可以通过**setDatabaseName()**方法指定打开的数据库。
+>
+> open和close方法用于打开和关闭对应的数据库
 
-> ![image-20231117092739057](QtNote.assets/image-20231117092739057.png)
+**QSqlQuery**
+
+> 用于处理SQL语句和结果的类。
+>
+> exec()，执行SQL查询或命令，如exec("SELECT \* FROM users ")。
+>
+> prepare()，将一个SQL语句绑定到QSqlQuery对象上，该方式可以使用占位符的方式使得SQL语句更加多样化，如`query.prepare("SELECT * FROM WHERE name = :%name")`，此时:%name占位符的值可以通过bindValue()替换掉。
+>
+> bindValue()，替换掉SQL语句的值，如query.bindValue(":%name", "ZHangSan")
+>
+> next()，exec()查询后的结果也保存在QSqlQuery对象中，通过next()函数可以遍历查询结果。
+>
+> value()，能够获取一条结果的某个属性值，可以通过列名或列号获取。
+>
+> clear()，清理掉当前QSqlQuery对象绑定的SQL语句。
+
+**QVariant**
+
+> ![image-20231120230746379](%E5%9B%BE%E7%89%87/QtNote/image-20231120230746379.png)
 
 ## 实例
 
