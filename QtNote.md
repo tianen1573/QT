@@ -1468,6 +1468,8 @@ void NetWork::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 
 # QSql
 
+## 初识
+
 **QSqlDatabase**
 
 > QSql支持多种数据库，所以需要使用**QSqlDatabase::addDatabase()**方法创建并配置数据库驱动，如"QSQLITE"、"QMYSQL"、"QODBC" 等。
@@ -1740,6 +1742,164 @@ void Sql::modify(const QStringList& sl)
     }
     m_query.clear();
 }
+
+~~~
+
+# ListView+Model+Delegate
+
+## 初识
+
+![image-20231122172205243](QtNote.assets/image-20231122172205243.png)
+
+![image-20231122172722558](QtNote.assets/image-20231122172722558.png)
+
+~~~C++
+// 创建自定义的Model类
+class MyModel : public QAbstractListModel {
+    // 实现必要的成员函数，如rowCount()、data()等
+};
+
+// 创建自定义的Delegate类
+class MyDelegate : public QAbstractItemDelegate {
+    // 实现必要的成员函数，如paint()、editorEvent()等
+};
+
+// 在主窗口或对话框中使用ListView
+QListView *listView = new QListView(this);
+
+// 创建Model对象
+MyModel *model = new MyModel(this);
+
+// 设置Model
+listView->setModel(model);
+
+// 创建Delegate对象
+MyDelegate *delegate = new MyDelegate(this);
+
+// 设置Delegate
+listView->setItemDelegate(delegate);
+
+// 添加数据到Model
+model->insertRows(0, 3);  // 假设插入3行数据
+model->setData(model->index(0, 0), "Item 1");
+model->setData(model->index(1, 0), "Item 2");
+model->setData(model->index(2, 0), "Item 3");
+
+// 显示ListView
+listView->show();
+~~~
+
+
+
+## 实例
+
+### 根据信息长度，设置不同的大小
+
+~~~C++
+//.h
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+#include <QListView>
+#include <QStandardItemModel>
+#include <QStyledItemDelegate>
+#include <QPainter>
+#include <QStringListModel>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
+// 自定义委托类
+class CustomDelegate : public QStyledItemDelegate {
+public:
+    // 设置Rict大小
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+        QString message = index.data(Qt::DisplayRole).toString();
+//        QString message = index.data(Qt::DisplayRole).value<QString>();
+
+        int width = 200;
+        int height = message.length() * 10;
+
+        return QSize(width, height);
+    }
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+        // 自定义绘制项的外观
+        painter->save();
+
+        QColor backgroundColor = QColor(255, 0, 0); // 设置为红色背景，可以根据需要修改颜色
+        if (option.state & QStyle::State_Selected) {
+            // 绘制选中项的背景
+            painter->fillRect(option.rect, option.palette.highlight());
+        }
+
+//        painter->fillRect(option.rect, backgroundColor);
+
+        // 绘制文本
+        painter->drawText(option.rect, Qt::AlignCenter, index.data().toString());
+
+        painter->restore();
+    }
+};
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+    // 创建模型
+    QStandardItemModel model;
+    QStringListModel model_sl;
+    // 设置委托
+    CustomDelegate delegate;
+private:
+    Ui::MainWindow *ui;
+
+};
+#endif // MAINWINDOW_H
+
+~~~
+
+~~~C++
+//.cpp
+#include "MainWindow.h"
+#include "ui_MainWindow.h"
+#include <QListView>
+#include <QStandardItemModel>
+#include <QStyledItemDelegate>
+#include <QVBoxLayout>
+#include <QWidget>
+
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+    model.appendRow(new QStandardItem("Short message."));
+    model.appendRow(new QStandardItem("This is a longer message that requires more height."));
+    model.appendRow(new QStandardItem("Another message."));
+    model.appendRow(new QStandardItem("A very long message that needs even more height than before."));
+
+    QStringList sl;
+    sl << "asdadasda" << "sada" << "sadogfhnreojqf" << "sadasdgrhytsvbyjurfdv";
+    int row = model_sl.rowCount(); // 获取当前行数
+    model_sl.insertRows(row, sl.count()); // 插入新行
+    for (int i = 0; i < sl.count(); ++i) {
+        QModelIndex index = model_sl.index(row + i); // 获取插入行的索引
+        model_sl.setData(index, sl[i], Qt::DisplayRole); // 设置数据
+    }
+    ui->listView->setModel(&model_sl);
+
+    ui->listView->setItemDelegate(&delegate);
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
 
 ~~~
 
