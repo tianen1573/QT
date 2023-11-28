@@ -1903,3 +1903,412 @@ MainWindow::~MainWindow()
 
 ~~~
 
+# TigerOther
+
+## 打包
+
+#### 版本号
+
+common文件
+
+![img](QtNote.assets/wps1.png)
+
+main.py文件
+
+![img](QtNote.assets/wps2.png)
+
+vs2019资源管理器
+
+![img](QtNote.assets/wps3.png)
+
+#### 功能检查/测试
+
+检索是否能用
+
+语音是否正常
+
+缩略图是否正常
+
+图片是否能打开
+
+视频是否能播放
+
+其他功能是否正常
+
+导出功能即结果是否符合预期
+
+#### 打包
+
+##### 检查
+
+构建编译release版本
+
+vs2019打开TigerDrSetup中的sln文件
+
+![img](QtNote.assets/wps4.png)
+
+pycharm打开win目录
+
+![img](QtNote.assets/wps5.png)
+
+修改sln中的package.py和pycharm中的before/after文件中的路径，其他文件中的相对路径也可能不对
+
+![img](QtNote.assets/wps6.png)
+
+查看sln属性，应为package_bofor/after
+
+![img](QtNote.assets/wps7.png)
+
+修改befor/after文件中的配置，打什么包配置什么
+
+![img](QtNote.assets/wps8.png)
+
+签名密码所在文件main.py
+
+ 
+
+![img](QtNote.assets/wps9.png)
+
+##### Vs2019
+
+重新生成解决方案
+
+##### pycharm
+
+根据需要，打不同源的包
+
+ 
+
+![img](QtNote.assets/wps10.png)
+
+进行自动化打包:Run main.py
+
+#### Mac
+
+运行package.sh文件，并设置dmg文件名
+
+ 
+
+![img](QtNote.assets/wps11.png)
+
+过程中会出现弹窗，选择替换
+
+#### 测试
+
+安装后测试功能，并检查各个版本安装包的数字签名
+
+#### 将包进行分类
+
+ 
+
+![img](QtNote.assets/wps12.png)
+
+⑖	
+
+![img](QtNote.assets/wps13.png)
+
+⑖	
+
+![img](QtNote.assets/wps14.png)
+
+#### 生成md5文件
+
+按版本号创建目录并在代码中指定路径
+
+ 
+
+![img](QtNote.assets/wps15.png)
+
+将数据恢复或数据备份的国内国外版本放到指定目录中
+
+点击对应功能的配置跳转到指定位置
+
+ 
+
+![img](QtNote.assets/wps16.png)
+
+修改发布日期和版本号即可
+
+ 
+
+![img](QtNote.assets/wps17.png)
+
+运行生成后将json文件重命名为
+
+> TigerDataBackupVersion.json
+>
+> TigerDataRecoveryVersion.json
+
+#### 修改release.txt
+
+提交更新信息，并将该文件单独commit
+
+ 
+
+![img](QtNote.assets/wps18.png)
+
+## 自动打包脚本
+
+#### 代码
+
+~~~python
+# -*- coding:utf-8 -*-
+import threading
+import time
+import pywinauto
+from threading import Timer
+import os
+import subprocess
+import shutil
+import pathlib
+import re
+
+version = '2.3.8'
+currentPath = os.path.dirname(os.path.realpath(__file__))
+projectDir=os.path.realpath(currentPath + "\\..\\TigerDrSetup")
+msbuild = r'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe'
+# sources = ["official", "360Safe", "Huawei", "Lenovo", "Tencent","toutiao", "google"]
+# sources = ["huhu(test)", "huhu(official)", "huhu(google)"]
+# sources = ['Lenovo', '360', 'official', 'google']
+# sources = ["google", "360"]
+sources = ["test"]
+outputDir = os.path.expanduser("~/Desktop")
+
+def autoPassword():
+    try:
+        hwnd = pywinauto.findwindows.find_window(title='Token Logon')
+        app = pywinauto.Application().connect(handle=hwnd)
+        win = app.top_window();
+        # win.print_control_identifiers()
+        # win['Edit2'].set_text('ETVhajZo006UPXz0')
+        # huhu签名密码
+        win['Edit2'].set_text('4gX5RG4zfsdKSrNb')
+        win['Button0'].click()
+    except Exception as e:
+        print(e)
+    global timer
+    timer = Timer(1,autoPassword)
+    timer.start()
+
+
+timer = Timer(1,autoPassword)
+
+def buildProject(projectDir,sln):
+    os.chdir(projectDir)
+    cmd = f"{msbuild} {sln} /t:Rebuild /p:Configuration=Release;Platform=x64"
+    subprocess.run(cmd)
+
+def creatSourceIni(projectDir,source):
+    with open(f"{projectDir}\\Source.ini","w+") as f:
+        f.writelines(["[General]\n",f"Source={source}\n"])
+
+def checkVersion(projectDir,version):
+    rc = f"{projectDir}\\TigerDrSetup.rc"
+    #with open(rc,"r",encoding='utf-16le') as f:
+    with open(rc, "r", encoding='gbk') as f:
+        rcdata = f.read()
+        result = re.findall('IDS_VERSION[^"]*"([^"]*)"',rcdata,re.I | re.M | re.S)
+        for match in result:
+            if match != version:
+                raise Exception("版本错误!")
+
+
+if __name__ == '__main__':
+    # 自定输入密码的定时器
+    timer.start()
+    # 版本检查
+    checkVersion(projectDir,version)
+    # 创建输出路径
+    p = pathlib.Path(f"{outputDir}\\{version}")
+    p.mkdir(parents=True, exist_ok=True)
+    # 编译所有来源的项目
+    for source in sources:
+        creatSourceIni(projectDir,source)
+        buildProject(projectDir,"TigerDrSetup.sln")
+        # tiger打包路径
+        # shutil.copy(f"{projectDir}\\..\\setup.exe",f"{outputDir}\\{version}\\TigerDbSetup_{version}_{source.lower()}.exe")
+        shutil.copy(f"{projectDir}\\..\\setup.exe",f"{outputDir}\\{version}\\TigerDbSetup_{version}_{source.lower()}.exe")
+        # Huhu打包路径
+        # shutil.copy(f"{projectDir}\\..\\setup.exe",f"{outputDir}\\{version}\\HuhuDbSetup_{version}_{source.lower()}.exe")
+    timer.cancel()
+
+
+~~~
+
+> 这段脚本是一个 Python 脚本，它执行一系列操作来编译和打包名为 "TigerDrSetup" 的项目。下面是对脚本的解释：
+>
+> 1. 导入所需的模块和库：
+>    - `threading`：用于创建和管理线程。
+>    - `time`：提供时间相关的功能。
+>    - `pywinauto`：用于自动化 Windows 桌面应用程序的库。
+>    - `os`：提供与操作系统交互的功能。
+>    - `subprocess`：用于在脚本中执行外部命令。
+>    - `shutil`：用于高级文件操作，如复制和移动文件。
+>    - `pathlib`：提供处理文件路径的功能。
+>    - `re`：用于正则表达式匹配。
+> 2. 定义了一些变量：
+>    - `version`：指定项目的版本号。
+>    - `currentPath`：获取当前脚本文件的路径。
+>    - `projectDir`：设置项目的路径。
+>    - `msbuild`：指定 MSBuild.exe 的路径。
+>    - `sources`：一个包含来源名称的列表，用于编译不同来源的项目。
+>    - `outputDir`：指定输出目录的路径。
+> 3. 定义了一个方法 `autoPassword()`：
+>    - 该方法用于自动填写密码，通过使用 pywinauto 库找到名为 "Token Logon" 的窗口，然后在窗口中找到密码输入框并填入密码，最后点击确定按钮。
+>    - 使用 `timer` 对象每隔1秒调用一次该方法，实现定时自动填写密码的功能。
+> 4. 定义了一个方法 `buildProject(projectDir, sln)`：
+>    - 该方法用于构建指定的项目。
+>    - 通过切换当前工作目录到项目目录，使用 `subprocess.run()` 执行命令行命令来调用 MSBuild.exe 进行项目的重新构建。
+> 5. 定义了一个方法 `creatSourceIni(projectDir, source)`：
+>    - 该方法用于创建一个名为 "Source.ini" 的文件，并将给定的来源名称写入文件中。
+> 6. 定义了一个方法 `checkVersion(projectDir, version)`：
+>    - 该方法用于检查项目的版本号是否与指定的版本号匹配。
+>    - 通过读取项目中的 "TigerDrSetup.rc" 文件，使用正则表达式匹配版本号，并与指定的版本号进行比较。如果不匹配，则抛出异常。
+> 7. 在主程序入口 `if __name__ == '__main__':` 中执行以下操作：
+>    - 启动自动填写密码的定时器。
+>    - 进行版本检查，确保项目的版本号与指定的版本号匹配。
+>    - 创建输出目录。
+>    - 针对每个来源名称，在项目中生成对应的 "Source.ini" 文件，然后调用 `buildProject()` 方法构建项目。
+>    - 使用 `shutil.copy()` 复制生成的安装程序（setup.exe）到输出目录，并根据来源名称和版本号进行命名。
+>    - 取消定时器，结束自动填写密码的功能。
+>
+> 这个脚本的主要目的是编译和打包 "TigerDrSetup" 项目的不同来源版本，并将生成的安装程序复制到指定的输出目录中。还包括自动填写密码的功能，用于自动化密码输入操作。
+
+#### 详情
+
+###### autoPassword()
+
+> `autoPassword()` 方法是一个定时器回调函数，用于自动填写密码。下面对该函数进行详细解释：
+>
+> 1. 使用 `pywinauto.findwindows.find_window(title='Token Logon')` 找到标题为 "Token Logon" 的窗口，并返回窗口的句柄（handle）。
+> 2. 使用 `pywinauto.Application().connect(handle=hwnd)` 连接到指定句柄的应用程序，并返回应用程序的对象。
+> 3. 获取顶层窗口对象：`win = app.top_window()`。
+> 4. 通过 `win['Edit2']` 获取密码输入框的控件对象。
+> 5. 使用 `set_text('4gX5RG4zfsdKSrNb')` 方法将密码文本设置为 `'4gX5RG4zfsdKSrNb'`（密码字符串）。
+> 6. 使用 `win['Button0'].click()` 点击确认按钮，提交密码。
+> 7. 如果在执行上述步骤的过程中发生异常，将异常信息打印出来。
+> 8. 创建一个全局的 `timer` 对象，每隔1秒钟调用一次 `autoPassword()` 方法，实现自动填写密码的定时功能。
+>
+> 总结：`autoPassword()` 方法利用 `pywinauto` 库自动化地找到密码输入框，并填入指定的密码文本，然后点击确认按钮。通过定时器的调用，可以实现定时自动填写密码的功能。在主程序中启动定时器后，该方法会被周期性地调用，以确保密码自动填写的持续性。
+
+######  buildProject(projectDir, sln)
+
+> `buildProject(projectDir, sln)` 方法用于构建指定的项目。下面对该方法进行详细解释：
+>
+> 1. 切换当前工作目录到项目目录：`os.chdir(projectDir)`。这样做是为了确保在正确的路径下执行构建命令。
+> 2. 构建命令的格式为：`{msbuild} {sln} /t:Rebuild /p:Configuration=Release;Platform=x64`。其中，`msbuild` 是指定的 MSBuild.exe 的路径，`sln` 是要构建的解决方案文件的路径。
+> 3. 使用 `subprocess.run(cmd)` 执行构建命令。`subprocess.run()` 方法可以运行外部命令，并等待命令执行完成。
+> 4. 构建命令中的参数解释：
+>    - `/t:Rebuild`：指定重新构建项目，而不是增量构建。
+>    - `/p:Configuration=Release`：指定构建配置为 Release，即发布版本。
+>    - `/p:Platform=x64`：指定目标平台为 64 位。
+>
+> 总结：`buildProject(projectDir, sln)` 方法通过调用 MSBuild.exe 执行构建命令，重新构建指定的项目。通过切换工作目录和传递命令行参数，可以确保项目在正确的配置和平台下进行构建。
+
+######  creatSourceIni(projectDir,source)
+
+> 函数`creatSourceIni(projectDir, source)`用于创建一个名为"Source.ini"的文件，并将指定的来源信息写入该文件。下面是对该函数的详细说明：
+>
+> 函数签名：
+>
+> ```
+> def creatSourceIni(projectDir, source):
+> ```
+>
+> 参数：
+>
+> - `projectDir`：表示项目目录的字符串，指定了项目目录的路径。
+> - `source`：表示来源的字符串，指定了要写入"Source.ini"文件的来源信息。
+>
+> 函数功能：
+>
+> - 在指定的项目目录下创建一个名为"Source.ini"的文件，并写入来源信息。
+>
+> 函数实现：
+>
+> 1. 打开"Source.ini"文件以进行写入操作。使用`open()`函数，并指定文件模式为"w+"，表示可读写打开文件，如果文件不存在则创建。
+> 2. 使用文件对象的`writelines()`法，将要写入的内容以列表的形式写入文件。
+>    - `[General]`：写入"[General]"作为文件的第一行，表示一个节的开始。
+>    - `Source=`：写入"Source="作为节的内容，表示来源的键。
+>    - `source`：写入`source`作为来源的值。
+> 3. 关闭文件。
+>
+> 示例调用：
+>
+> ```
+> creatSourceIni(projectDir, "test")
+> ```
+>
+> 示例输出：
+> 在指定的项目目录下创建了一个名为"Source.ini"的文件，并写入以下内容：
+>
+> ```
+> [General]
+> Source=test
+> ```
+>
+> 该函数的作用是为指定的项目创建一个用于存储来源信息的配置文件，以便后续在构建项目时使用正确的来源。
+
+###### checkVersion(projectDir,version)
+
+> 函数`checkVersion(projectDir, version)`用于检查指定项目的版本是否与预期版本一致。下面是对该函数的详细说明：
+>
+> 函数签名：
+> ```python
+> def checkVersion(projectDir, version):
+> ```
+>
+> 参数：
+> - `projectDir`：表示项目目录的字符串，指定了项目目录的路径。
+> - `version`：表示预期版本的字符串，指定了要检查的版本号。
+>
+> 函数功能：
+> - 检查指定项目的版本号是否与预期版本号一致。
+>
+> 函数实现：
+> 1. 构建一个文件路径，表示项目中的版本信息文件。使用`os.path.join()`函数，将项目目录和版本信息文件名拼接起来。
+> 2. 打开版本信息文件以进行读取操作。使用`open()`函数，并指定文件模式为"r"，表示只读打开文件。
+> 3. 读取版本信息文件的内容。使用文件对象的`read()`方法，将文件的内容读取为一个字符串。
+> 4. 使用正则表达式进行版本号的匹配。使用`re.findall()`函数，传入正则表达式模式、待匹配的字符串和匹配标志，以提取版本号。
+>    - 正则表达式模式：`'IDS_VERSION[^"]*"([^"]*)"'`，匹配以"IDS_VERSION"开头，后跟任意字符（非引号），然后以引号结束的模式。
+>    - 待匹配的字符串：版本信息文件的内容。
+>    - 匹配标志：使用`re.I`表示不区分大小写，`re.M`表示多行匹配，`re.S`表示单行模式（"."匹配包括换行符在内的所有字符）。
+> 5. 遍历匹配结果，检查是否存在与预期版本号一致的版本号。如果存在不一致的版本号，则抛出异常。
+> 6. 关闭文件。
+>
+> 示例调用：
+> ```python
+> checkVersion(projectDir, '2.3.8')
+> ```
+>
+> 该函数的作用是读取项目中的版本信息文件，并提取其中的版本号，然后与预期版本号进行比较，以确保项目的版本号与预期一致。如果版本号不一致，函数将抛出异常，提示版本错误。这有助于确保项目的版本控制和一致性。
+
+# TigerCode
+
+## BUGorFEATURE
+
+###### 昵称有时候显示有时候不显示
+
+![image-20231128100930794](QtNote.assets/image-20231128100930794.png)
+
+> 原因：item.name为空。本质是删除的消息对应的item设置了form，而未删除的没有设置，需要从构建item的地方入手。
+>
+> ![image-20231128101740739](QtNote.assets/image-20231128101740739.png)
+
+###### 昵称有时候完全显示有时候缩略显示
+
+![image-20231128101832971](QtNote.assets/image-20231128101832971.png)
+
+![image-20231128102858907](QtNote.assets/image-20231128102858907.png)
+
+
+
+![image-20231128102950398](QtNote.assets/image-20231128102950398.png)
+
+当将鼠标拉至app外，昵称就会完全显示
+
+> 原因：MeasureTextWidth和fonttMetries的字体样式不同，使得获取到的字符串宽度不同。将painter的字体样式设置为font即可
+>
+> ![image-20231128105247755](QtNote.assets/image-20231128105247755.png)
+>
+
