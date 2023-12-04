@@ -10,7 +10,7 @@ PointerQWidget::PointerQWidget(QWidget *parent)
     QCursor pointingHandCursor(Qt::PointingHandCursor);
     setCursor(pointingHandCursor);
 
-//    setAttribute(Qt::WA_StyledBackground);
+    setAttribute(Qt::WA_StyledBackground);
 }
 
 void PointerQWidget::init()

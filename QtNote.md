@@ -454,7 +454,204 @@ BackupMaker {
 
 > 
 
+### 实例6：鼠标样式和悬浮样式
 
+> 实现当鼠标移动到指定窗口时，鼠标样式发生改变
+>
+> ~~~C++
+> QCursor pointingHandCursor(Qt::PointingHandCursor); // 创建一个鼠标光标样式对象
+> setCursor(pointingHandCursor); // 设置前所在窗口的鼠标样式
+> setAttribute(Qt::WA_StyledBackground); // 弃用启用样式化的背景绘制
+> ~~~
+>
+> 1. `QCursor pointingHandCursor(Qt::PointingHandCursor);`：这一行代码创建了一个名为`pointingHandCursor`的`QCursor`对象，并将其初始化为`Qt::PointingHandCursor`样式的光标。`Qt::PointingHandCursor`是Qt框架提供的一个光标样式，通常用于表示可点击的链接或按钮。
+> 2. `setCursor(pointingHandCursor);`：这一行代码将窗口或部件的光标设置为`pointingHandCursor`对象。这样，当鼠标移动到该窗口或部件上时，光标将显示为指向手形状。
+> 3. `setAttribute(Qt::WA_StyledBackground);`：这一行代码为窗口或部件设置了`Qt::WA_StyledBackground`属性。`Qt::WA_StyledBackground`是一个窗口属性，用于启用样式化的背景绘制。通过设置该属性，窗口或部件可以根据当前应用程序的样式和主题绘制其背景。
+
+> 实现当鼠标悬浮到指定组件时，其样式发生改变
+>
+> 通过样式表
+>
+> ~~~C++
+> .TestWidget #widget_test:hover{
+>     //
+> }
+> // 当鼠标移动到widget_test时，widget_test所在的区域的样式就会发生改变
+> // 这种方法适合配合ListView，因为当有嵌套组件出现时，容易出现内部组件的样式不变化的情况
+> ~~~
+>
+> 通过捕获鼠标+事件过滤器+样式
+>
+> ~~~C++
+> #include "ButtonSetting.h"
+> 
+> #include <QHBoxLayout>
+> #include <QLabel>
+> #include <QPixmap>
+> #include <QWidget>
+> #include <QSpacerItem>
+> #include <QEvent>
+> 
+> #include <QFont>
+> 
+> ButtonSetting::ButtonSetting(QWidget* parent) :
+>     QPushButton(parent)
+> {
+>     widget = nullptr;
+> }
+> 
+> ButtonSetting::~ButtonSetting()
+> {
+> 
+> }
+> 
+> void ButtonSetting::init(const QString& icoPath, const QString& txt)
+> {
+>     this->setObjectName("ButtonSettingMain");
+> 
+>     QHBoxLayout* layout = new QHBoxLayout;
+>     layout->setContentsMargins(19, 0, 19, 0);
+>     layout->setSpacing(0);
+>     QHBoxLayout* bodyLayout = new QHBoxLayout;
+>     bodyLayout->setContentsMargins(0, 0, 0, 0);
+>     bodyLayout->setSpacing(0);
+>     widget = new QWidget;
+>     // 设置默认的背景色
+>     setDefaultBackgroundColor();
+> 
+>     QLabel* icoLabel = new QLabel();
+>     icoLabel->setObjectName("icoLabel");
+>     icoLabel->setPixmap(QPixmap(icoPath));
+>     icoLabel->setScaledContents(true);
+>     icoLabel->setFixedSize(24, 24);
+>     icoLabel->setStyleSheet("border: none");
+> 
+>     QLabel* txtLabel = new QLabel();
+>     txtLabel->setText(txt);
+>     txtLabel->setObjectName("txtLabel");
+>     txtLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+>     txtLabel->setMaximumHeight(58);
+>     txtLabel->setStyleSheet("border: none; \
+>                             font-size: 14px; \
+>                             color: #1E1E1E; \
+>                             font-weight: 500;");
+> 
+>     QLabel* arrowLabel = new QLabel();
+>     arrowLabel->setObjectName("arrowLabel");
+>     arrowLabel->setPixmap(QPixmap(":/images/setting_arrow.png"));
+>     arrowLabel->setScaledContents(true);
+>     arrowLabel->setFixedSize(22, 22);
+>     arrowLabel->setStyleSheet("border: none;");
+> 
+>     bodyLayout->addSpacerItem(new QSpacerItem(1, 20, QSizePolicy::Fixed, QSizePolicy::Fixed));
+>     bodyLayout->addWidget(icoLabel);
+>     bodyLayout->addSpacerItem(new QSpacerItem(16, 20, QSizePolicy::Fixed, QSizePolicy::Fixed));
+>     bodyLayout->addWidget(txtLabel);
+>     bodyLayout->addSpacerItem(new QSpacerItem(9999, 20, QSizePolicy::Expanding, QSizePolicy::Expanding));
+>     bodyLayout->addWidget(arrowLabel);
+>     bodyLayout->addSpacerItem(new QSpacerItem(1, 20, QSizePolicy::Fixed, QSizePolicy::Fixed));
+> 
+>     widget->setMinimumHeight(59);
+>     widget->setLayout(bodyLayout);
+>     widget->setObjectName("ButtonSettingWidget");
+> 
+>     layout->addWidget(widget);
+>     this->setLayout(layout);
+> 
+>     // 在widget上安装事件过滤器
+>     if (widget) {
+>         widget->installEventFilter(this);
+>     }
+> }
+> 
+> bool ButtonSetting::eventFilter(QObject* object, QEvent* event)
+> {
+>     if (object == widget) {
+>         if (event->type() == QEvent::Enter) {
+>             // 鼠标进入widget：设置悬停背景颜色
+>             setHoverBackgroundColor();
+>         }
+>         else if (event->type() == QEvent::Leave) {
+>             // 鼠标离开widget：设置默认背景颜色
+>             setDefaultBackgroundColor();
+>         }
+>         else if (event->type() == QEvent::MouseButtonPress) {
+>             // 鼠标按下widget：设置按下背景颜色
+>             setPressedBackgroundColor();
+>         }
+>     }
+> 
+>     // 继续处理其他事件
+>     return QObject::eventFilter(object, event);
+> }
+> 
+> void ButtonSetting::setDefaultBackgroundColor()
+> {
+>     // 设置默认背景色
+>     if (widget) {
+>         widget->setStyleSheet("background-color: #FFFFFF; \
+>                               border-bottom: 1px solid #DADBDE;");
+>     }
+> }
+> 
+> void ButtonSetting::setHoverBackgroundColor()
+> {
+>     // 设置悬停背景色
+>     if (widget) {
+>         widget->setStyleSheet("background-color: #F6F6F6; \
+>                               border: 1px solid #DADBDE; \
+>                               border-radius: 4px;");
+>     }
+> }
+> void ButtonSetting::setPressedBackgroundColor()
+> {
+>     // 设置按压背景色
+>     if (widget) {
+>         widget->setStyleSheet("background-color: #EAF2FF; \
+>                               border: 1px solid #DADBDE; \
+>                               border-radius: 4px;");
+>     }
+> }
+> 
+> ~~~
+>
+> ~~~C++
+> #ifndef BUTTONSETTING_H
+> #define BUTTONSETTING_H
+> 
+> #include <QPushButton>
+> #include <QObject>
+> 
+> class ButtonSetting : public QPushButton
+> {
+>     Q_OBJECT
+> public:
+>     ButtonSetting(QWidget* parent = nullptr);
+>     virtual ~ButtonSetting();
+> 
+>     void init(const QString& icoPath, const QString& txt);
+>     void init(const QString& icoPath, const QString& txt, const QString& defaultValue);
+> 
+> protected:
+>     bool eventFilter(QObject* object, QEvent* event) override;
+>     void setDefaultBackgroundColor();
+>     void setHoverBackgroundColor();
+>     void setPressedBackgroundColor();
+> 
+> private:
+>     // Add any additional member variables or functions here, if needed
+>     QWidget* widget;
+> };
+> 
+> #endif // BUTTONSETTING_H
+> 
+> ~~~
+>
+> 
+>
+> 
+>
+> 
 
 # deBug
 
@@ -2292,6 +2489,16 @@ if __name__ == '__main__':
 
 https://www.hardcode.today/macos-app-zi-dong-sheng-ji-shi-xian.html
 ~~~
+
+### 差异
+
+> dmg的来源不同：是否有签名，签名是否不同
+>
+> 安装方式不同：图形拖拽，命令行cp，程序cp
+>
+> 权限不同：是否有sudo，是否带强制参数f，是否开启了全磁盘访问权限
+>
+> 覆盖差异：是否是同种方法覆盖？拖拽安装的，用拖拽来覆盖；不是拖拽安装的，用拖拽覆盖；拖拽安装的，用cp覆盖；不是拖拽安装的，用cp覆盖。
 
 ### 知识点
 
