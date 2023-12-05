@@ -474,10 +474,11 @@ BackupMaker {
 >
 > ~~~C++
 > .TestWidget #widget_test:hover{
->     //
+>  //
 > }
 > // 当鼠标移动到widget_test时，widget_test所在的区域的样式就会发生改变
-> // 这种方法适合配合ListView，因为当有嵌套组件出现时，容易出现内部组件的样式不变化的情况
+> // 这种方法适合配合ListView进行实时绘制，因为当有嵌套组件出现时，容易出现内部组件的样式不变化的情况
+> // background-color: transparent; 可以让当前组件的背景色变成透明的，从而完全依赖父组件的背景
 > ~~~
 >
 > 通过捕获鼠标+事件过滤器+样式
@@ -495,9 +496,9 @@ BackupMaker {
 > #include <QFont>
 > 
 > ButtonSetting::ButtonSetting(QWidget* parent) :
->     QPushButton(parent)
+>  QPushButton(parent)
 > {
->     widget = nullptr;
+>  widget = nullptr;
 > }
 > 
 > ButtonSetting::~ButtonSetting()
@@ -507,110 +508,110 @@ BackupMaker {
 > 
 > void ButtonSetting::init(const QString& icoPath, const QString& txt)
 > {
->     this->setObjectName("ButtonSettingMain");
+>  this->setObjectName("ButtonSettingMain");
 > 
->     QHBoxLayout* layout = new QHBoxLayout;
->     layout->setContentsMargins(19, 0, 19, 0);
->     layout->setSpacing(0);
->     QHBoxLayout* bodyLayout = new QHBoxLayout;
->     bodyLayout->setContentsMargins(0, 0, 0, 0);
->     bodyLayout->setSpacing(0);
->     widget = new QWidget;
->     // 设置默认的背景色
->     setDefaultBackgroundColor();
+>  QHBoxLayout* layout = new QHBoxLayout;
+>  layout->setContentsMargins(19, 0, 19, 0);
+>  layout->setSpacing(0);
+>  QHBoxLayout* bodyLayout = new QHBoxLayout;
+>  bodyLayout->setContentsMargins(0, 0, 0, 0);
+>  bodyLayout->setSpacing(0);
+>  widget = new QWidget;
+>  // 设置默认的背景色
+>  setDefaultBackgroundColor();
 > 
->     QLabel* icoLabel = new QLabel();
->     icoLabel->setObjectName("icoLabel");
->     icoLabel->setPixmap(QPixmap(icoPath));
->     icoLabel->setScaledContents(true);
->     icoLabel->setFixedSize(24, 24);
->     icoLabel->setStyleSheet("border: none");
+>  QLabel* icoLabel = new QLabel();
+>  icoLabel->setObjectName("icoLabel");
+>  icoLabel->setPixmap(QPixmap(icoPath));
+>  icoLabel->setScaledContents(true);
+>  icoLabel->setFixedSize(24, 24);
+>  icoLabel->setStyleSheet("border: none");
 > 
->     QLabel* txtLabel = new QLabel();
->     txtLabel->setText(txt);
->     txtLabel->setObjectName("txtLabel");
->     txtLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
->     txtLabel->setMaximumHeight(58);
->     txtLabel->setStyleSheet("border: none; \
->                             font-size: 14px; \
->                             color: #1E1E1E; \
->                             font-weight: 500;");
+>  QLabel* txtLabel = new QLabel();
+>  txtLabel->setText(txt);
+>  txtLabel->setObjectName("txtLabel");
+>  txtLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+>  txtLabel->setMaximumHeight(58);
+>  txtLabel->setStyleSheet("border: none; \
+>                          font-size: 14px; \
+>                          color: #1E1E1E; \
+>                          font-weight: 500;");
 > 
->     QLabel* arrowLabel = new QLabel();
->     arrowLabel->setObjectName("arrowLabel");
->     arrowLabel->setPixmap(QPixmap(":/images/setting_arrow.png"));
->     arrowLabel->setScaledContents(true);
->     arrowLabel->setFixedSize(22, 22);
->     arrowLabel->setStyleSheet("border: none;");
+>  QLabel* arrowLabel = new QLabel();
+>  arrowLabel->setObjectName("arrowLabel");
+>  arrowLabel->setPixmap(QPixmap(":/images/setting_arrow.png"));
+>  arrowLabel->setScaledContents(true);
+>  arrowLabel->setFixedSize(22, 22);
+>  arrowLabel->setStyleSheet("border: none;");
 > 
->     bodyLayout->addSpacerItem(new QSpacerItem(1, 20, QSizePolicy::Fixed, QSizePolicy::Fixed));
->     bodyLayout->addWidget(icoLabel);
->     bodyLayout->addSpacerItem(new QSpacerItem(16, 20, QSizePolicy::Fixed, QSizePolicy::Fixed));
->     bodyLayout->addWidget(txtLabel);
->     bodyLayout->addSpacerItem(new QSpacerItem(9999, 20, QSizePolicy::Expanding, QSizePolicy::Expanding));
->     bodyLayout->addWidget(arrowLabel);
->     bodyLayout->addSpacerItem(new QSpacerItem(1, 20, QSizePolicy::Fixed, QSizePolicy::Fixed));
+>  bodyLayout->addSpacerItem(new QSpacerItem(1, 20, QSizePolicy::Fixed, QSizePolicy::Fixed));
+>  bodyLayout->addWidget(icoLabel);
+>  bodyLayout->addSpacerItem(new QSpacerItem(16, 20, QSizePolicy::Fixed, QSizePolicy::Fixed));
+>  bodyLayout->addWidget(txtLabel);
+>  bodyLayout->addSpacerItem(new QSpacerItem(9999, 20, QSizePolicy::Expanding, QSizePolicy::Expanding));
+>  bodyLayout->addWidget(arrowLabel);
+>  bodyLayout->addSpacerItem(new QSpacerItem(1, 20, QSizePolicy::Fixed, QSizePolicy::Fixed));
 > 
->     widget->setMinimumHeight(59);
->     widget->setLayout(bodyLayout);
->     widget->setObjectName("ButtonSettingWidget");
+>  widget->setMinimumHeight(59);
+>  widget->setLayout(bodyLayout);
+>  widget->setObjectName("ButtonSettingWidget");
 > 
->     layout->addWidget(widget);
->     this->setLayout(layout);
+>  layout->addWidget(widget);
+>  this->setLayout(layout);
 > 
->     // 在widget上安装事件过滤器
->     if (widget) {
->         widget->installEventFilter(this);
->     }
+>  // 在widget上安装事件过滤器
+>  if (widget) {
+>      widget->installEventFilter(this);
+>  }
 > }
 > 
 > bool ButtonSetting::eventFilter(QObject* object, QEvent* event)
 > {
->     if (object == widget) {
->         if (event->type() == QEvent::Enter) {
->             // 鼠标进入widget：设置悬停背景颜色
->             setHoverBackgroundColor();
->         }
->         else if (event->type() == QEvent::Leave) {
->             // 鼠标离开widget：设置默认背景颜色
->             setDefaultBackgroundColor();
->         }
->         else if (event->type() == QEvent::MouseButtonPress) {
->             // 鼠标按下widget：设置按下背景颜色
->             setPressedBackgroundColor();
->         }
->     }
+>  if (object == widget) {
+>      if (event->type() == QEvent::Enter) {
+>          // 鼠标进入widget：设置悬停背景颜色
+>          setHoverBackgroundColor();
+>      }
+>      else if (event->type() == QEvent::Leave) {
+>          // 鼠标离开widget：设置默认背景颜色
+>          setDefaultBackgroundColor();
+>      }
+>      else if (event->type() == QEvent::MouseButtonPress) {
+>          // 鼠标按下widget：设置按下背景颜色
+>          setPressedBackgroundColor();
+>      }
+>  }
 > 
->     // 继续处理其他事件
->     return QObject::eventFilter(object, event);
+>  // 继续处理其他事件
+>  return QObject::eventFilter(object, event);
 > }
 > 
 > void ButtonSetting::setDefaultBackgroundColor()
 > {
->     // 设置默认背景色
->     if (widget) {
->         widget->setStyleSheet("background-color: #FFFFFF; \
->                               border-bottom: 1px solid #DADBDE;");
->     }
+>  // 设置默认背景色
+>  if (widget) {
+>      widget->setStyleSheet("background-color: #FFFFFF; \
+>                            border-bottom: 1px solid #DADBDE;");
+>  }
 > }
 > 
 > void ButtonSetting::setHoverBackgroundColor()
 > {
->     // 设置悬停背景色
->     if (widget) {
->         widget->setStyleSheet("background-color: #F6F6F6; \
->                               border: 1px solid #DADBDE; \
->                               border-radius: 4px;");
->     }
+>  // 设置悬停背景色
+>  if (widget) {
+>      widget->setStyleSheet("background-color: #F6F6F6; \
+>                            border: 1px solid #DADBDE; \
+>                            border-radius: 4px;");
+>  }
 > }
 > void ButtonSetting::setPressedBackgroundColor()
 > {
->     // 设置按压背景色
->     if (widget) {
->         widget->setStyleSheet("background-color: #EAF2FF; \
->                               border: 1px solid #DADBDE; \
->                               border-radius: 4px;");
->     }
+>  // 设置按压背景色
+>  if (widget) {
+>      widget->setStyleSheet("background-color: #EAF2FF; \
+>                            border: 1px solid #DADBDE; \
+>                            border-radius: 4px;");
+>  }
 > }
 > 
 > ~~~
@@ -624,23 +625,23 @@ BackupMaker {
 > 
 > class ButtonSetting : public QPushButton
 > {
->     Q_OBJECT
+>  Q_OBJECT
 > public:
->     ButtonSetting(QWidget* parent = nullptr);
->     virtual ~ButtonSetting();
+>  ButtonSetting(QWidget* parent = nullptr);
+>  virtual ~ButtonSetting();
 > 
->     void init(const QString& icoPath, const QString& txt);
->     void init(const QString& icoPath, const QString& txt, const QString& defaultValue);
+>  void init(const QString& icoPath, const QString& txt);
+>  void init(const QString& icoPath, const QString& txt, const QString& defaultValue);
 > 
 > protected:
->     bool eventFilter(QObject* object, QEvent* event) override;
->     void setDefaultBackgroundColor();
->     void setHoverBackgroundColor();
->     void setPressedBackgroundColor();
+>  bool eventFilter(QObject* object, QEvent* event) override;
+>  void setDefaultBackgroundColor();
+>  void setHoverBackgroundColor();
+>  void setPressedBackgroundColor();
 > 
 > private:
->     // Add any additional member variables or functions here, if needed
->     QWidget* widget;
+>  // Add any additional member variables or functions here, if needed
+>  QWidget* widget;
 > };
 > 
 > #endif // BUTTONSETTING_H
@@ -651,7 +652,52 @@ BackupMaker {
 >
 > 
 >
-> 
+
+### 超链接
+
+![image-20231205150103384](QtNote.assets/image-20231205150103384.png)
+
+##### QPushButton+槽函数
+
+> 设置文本样式，模拟为超链接
+>
+> ~~~C++
+> .WidgetSettingAbout #btn_support {
+>     text-decoration: underline;
+>     border: none;
+>     background-color: transparent;
+>     font-weight: 400;
+>     color: #69B1FF;
+>     line-height: 20px;
+> }
+> .WidgetSettingAbout #btn_support:hover {
+>     text-decoration: underline;
+>     border: none;
+>     background-color: transparent;
+>     font-weight: 400;
+>     color: blue;
+>     line-height: 20px;
+> }
+> ~~~
+>
+> 点击按钮触发槽函数
+>
+> ~~~C++
+> void DialogAbout::on_btn_support_clicked()
+> {
+>     QDesktopServices::openUrl(url);
+> }
+> ~~~
+
+##### QLabel+设置属性
+
+> 设置内容+属性
+>
+> ![image-20231205150407027](QtNote.assets/image-20231205150407027.png)
+>
+> ![image-20231205150425292](QtNote.assets/image-20231205150425292.png)
+>
+> ![image-20231205150459815](QtNote.assets/image-20231205150459815.png)
 
 # deBug
 
