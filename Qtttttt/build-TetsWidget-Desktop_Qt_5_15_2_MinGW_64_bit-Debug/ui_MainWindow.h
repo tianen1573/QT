@@ -13,7 +13,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -24,10 +23,6 @@ public:
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QWidget *widget;
-    QVBoxLayout *verticalLayout;
-    QWidget *widget_3;
-    QWidget *widget_4;
-    QWidget *widget_5;
     QWidget *widget_2;
 
     void setupUi(QMainWindow *MainWindow)
@@ -35,36 +30,21 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(800, 600);
+        MainWindow->setStyleSheet(QString::fromUtf8("background: transparent;"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        centralwidget->setStyleSheet(QString::fromUtf8("background-color: transparent;"));
+        centralwidget->setStyleSheet(QString::fromUtf8(""));
         horizontalLayout = new QHBoxLayout(centralwidget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         widget = new QWidget(centralwidget);
         widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
-        verticalLayout = new QVBoxLayout(widget);
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        widget_3 = new QWidget(widget);
-        widget_3->setObjectName(QString::fromUtf8("widget_3"));
-
-        verticalLayout->addWidget(widget_3);
-
-        widget_4 = new QWidget(widget);
-        widget_4->setObjectName(QString::fromUtf8("widget_4"));
-
-        verticalLayout->addWidget(widget_4);
-
-        widget_5 = new QWidget(widget);
-        widget_5->setObjectName(QString::fromUtf8("widget_5"));
-
-        verticalLayout->addWidget(widget_5);
-
+        widget->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
 
         horizontalLayout->addWidget(widget);
 
         widget_2 = new QWidget(centralwidget);
         widget_2->setObjectName(QString::fromUtf8("widget_2"));
+        widget_2->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 85, 255);"));
 
         horizontalLayout->addWidget(widget_2);
 
