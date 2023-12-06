@@ -699,6 +699,52 @@ BackupMaker {
 >
 > ![image-20231205150459815](QtNote.assets/image-20231205150459815.png)
 
+### 不规则透明窗口
+
+![image-20231206152149014](QtNote.assets/image-20231206152149014.png)
+
+![image-20231206133407657](QtNote.assets/image-20231206133407657.png)
+
+> 通过绘制实现假透明
+>
+> ~~~C++
+> #include "mainwindow.h"
+> #include "ui_mainwindow.h"
+> #include <QPainter>
+> 
+> MainWindow::MainWindow(QWidget *parent)
+>     : QMainWindow(parent)
+>     , ui(new Ui::MainWindow)
+> {
+> 
+>     setWindowFlag(Qt::FramelessWindowHint); // 设置无边框
+>     setAttribute(Qt::WA_TranslucentBackground); // 设置窗口背景色为透明
+>     ui->setupUi(this);
+> }
+> 
+> MainWindow::~MainWindow()
+> {
+>     delete ui;
+> }
+> 
+> void MainWindow::paintEvent(QPaintEvent *event)
+> {
+>     QPainter painter(this);
+>     painter.setRenderHint(QPainter::Antialiasing); // 抗锯齿
+> 	
+>     // 绘制矩形
+>     painter.fillRect(QRect(width() - 50,height() - 50,50,50),QBrush(QColor(0,0,0,1))); // 0~255，其中0为全透明，并使鼠标穿透
+>     painter.fillRect(QRect(0,0,width(),height() - 50),QBrush(QColor(255,0,0,255)));
+>     painter.fillRect(QRect(0,height() - 50,width() - 50,50),QBrush(QColor(255,0,0,255)));
+> }
+> ~~~
+
+### 自定义圆角
+
+![image-20231206152546009](QtNote.assets/image-20231206152546009.png)
+
+> 自定义圆角
+
 # deBug
 
 #### 在构造函数里设置样式不生效
