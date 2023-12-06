@@ -699,27 +699,43 @@ BackupMaker {
 >
 > ![image-20231205150459815](QtNote.assets/image-20231205150459815.png)
 
-### 不规则透明窗口
+### 不规则透明窗口+阴影效果+自定义圆角
 
-![image-20231206152149014](QtNote.assets/image-20231206152149014.png)
+![image-20231206224658098](%E5%9B%BE%E7%89%87/QtNote/image-20231206224658098.png)
 
-![image-20231206133407657](QtNote.assets/image-20231206133407657.png)
+![image-20231206224722455](%E5%9B%BE%E7%89%87/QtNote/image-20231206224722455.png)
 
 > 通过绘制实现假透明
+>
+> 绘制圆角矩形区域+填充不需要的圆角
+>
+> 添加阴影效果
 >
 > ~~~C++
 > #include "mainwindow.h"
 > #include "ui_mainwindow.h"
 > #include <QPainter>
+> #include <QGraphicsDropShadowEffect>
 > 
 > MainWindow::MainWindow(QWidget *parent)
 >     : QMainWindow(parent)
 >     , ui(new Ui::MainWindow)
 > {
 > 
->     setWindowFlag(Qt::FramelessWindowHint); // 设置无边框
->     setAttribute(Qt::WA_TranslucentBackground); // 设置窗口背景色为透明
+>     //QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint)
+> 
+>     setWindowFlag(Qt::FramelessWindowHint);
+>     setAttribute(Qt::WA_TranslucentBackground);
 >     ui->setupUi(this);
+> 
+>     // 创建阴影效果对象
+>     QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(this);
+>     shadowEffect->setBlurRadius(10); // 设置阴影的模糊半径
+>     shadowEffect->setColor(Qt::red); // 设置阴影的颜色
+>     shadowEffect->setOffset(0, 0); // 设置阴影的偏移量
+>     // 将阴影效果应用于 主窗口，此时阴影效果将作用在主窗口所在区域，最底层的且最先有颜色的位置
+>     this->setGraphicsEffect(shadowEffect);
+> 
 > }
 > 
 > MainWindow::~MainWindow()
@@ -730,20 +746,53 @@ BackupMaker {
 > void MainWindow::paintEvent(QPaintEvent *event)
 > {
 >     QPainter painter(this);
->     painter.setRenderHint(QPainter::Antialiasing); // 抗锯齿
-> 	
->     // 绘制矩形
->     painter.fillRect(QRect(width() - 50,height() - 50,50,50),QBrush(QColor(0,0,0,1))); // 0~255，其中0为全透明，并使鼠标穿透
->     painter.fillRect(QRect(0,0,width(),height() - 50),QBrush(QColor(255,0,0,255)));
->     painter.fillRect(QRect(0,height() - 50,width() - 50,50),QBrush(QColor(255,0,0,255)));
+>     painter.setRenderHint(QPainter::Antialiasing);
+>     painter.fillRect(rect(),QBrush(QColor(0,0,0,1)));
+> 
+>     QRect widget2Rect = ui->widget_2->rect().translated(ui->widget_2->mapTo(this, QPoint(0, 0)));
+>     QRect widget3Rect = ui->widget_3->rect().translated(ui->widget_3->mapTo(this, QPoint(0, 0)));
+>     int radius = 6;
+>     QColor backGround(255,255,255,255);
+> 
+>     painter.setBrush(backGround); // 设置矩形的填充颜色
+>     painter.setPen(Qt::transparent); // 设置边框颜色为透明
+> 
+>     // 绘制圆角矩形
+>     painter.drawRoundedRect(widget2Rect, radius, radius);
+>     // 填充左下角
+>     widget2Rect = QRect(ui->widget_2->geometry().x(), ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
+>     painter.fillRect(widget2Rect, backGround);
+>     // 填充右下角
+>     widget2Rect = QRect(ui->widget_2->geometry().x() + ui->widget_2->geometry().width() - radius,  \
+>                        ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
+>     painter.fillRect(widget2Rect, backGround);
+> 
+>     // 绘制圆角矩形
+>     painter.drawRoundedRect(widget3Rect, radius, radius);
+>     // 填充左上角
+>     widget3Rect.setHeight(radius);
+>     widget3Rect.setWidth(radius);
+>     painter.fillRect(widget3Rect, backGround);
+>     // 填充左下角
+>     widget3Rect = QRect(widget3Rect.x(), \
+>                         widget3Rect.y() + ui->widget_3->height() - radius, radius, radius);
+>     painter.fillRect(widget3Rect, backGround);
 > }
+> 
+> 
 > ~~~
-
-### 自定义圆角
-
-![image-20231206152546009](QtNote.assets/image-20231206152546009.png)
-
-> 自定义圆角
+>
+> **步骤：**
+>
+> - 需要将主窗口的背景色设置为**透明**，并且设置为**无边框**
+> - 在主窗口区域绘制一个**假透明**，全透明会穿透鼠标
+> - 根据需要绘制出其他背景色，比如上述的不规则窗口，就绘制出了两个区域
+> - 根据需要绘制背景色时，可以设置圆角矩形，然后再根据需要填充不需要的圆角，实现自定义圆角
+> - 设置阴影效果时，组件必须有背景色才会显示阴影效果。如组件没有背景色，则会将阴影效果设置在，在该组件窗口区域最接近底层有背景颜色的区域上(测试出来的，不保真)。
+>
+> **其他：**
+>
+> - 不规则透明窗口，通过设置主窗口图片遮罩，也能实现？
 
 # deBug
 

@@ -15,13 +15,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // 创建阴影效果对象
-    QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(ui->widget_3);
-    shadowEffect->setBlurRadius(20); // 设置阴影的模糊半径
+    QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(this);
+    shadowEffect->setBlurRadius(10); // 设置阴影的模糊半径
     shadowEffect->setColor(Qt::red); // 设置阴影的颜色
     shadowEffect->setOffset(0, 0); // 设置阴影的偏移量
+    // 将阴影效果应用于 主窗口，此时阴影效果将作用在主窗口所在区域，最底层的且最先有颜色的位置
+    this->setGraphicsEffect(shadowEffect);
 
-    // 将阴影效果应用于 widget_2
-    ui->widget_3->setGraphicsEffect(shadowEffect);
 }
 
 MainWindow::~MainWindow()
@@ -61,18 +61,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
     painter.fillRect(widget3Rect, backGround);
     // 填充左下角
     widget3Rect = QRect(widget3Rect.x(), \
-                        ui->widget_3->geometry().y() + ui->widget_3->geometry().height() - radius, radius, radius);
+                        widget3Rect.y() + ui->widget_3->height() - radius, radius, radius);
     painter.fillRect(widget3Rect, backGround);
-
-
-
-
-
-
-
-
-//    painter.fillRect(QRect(width() - 50,height() - 50,50,50),QBrush(QColor(0,0,0,1)));
-//    painter.fillRect(QRect(0,0,width(),height() - 50),QBrush(QColor(255,0,0,255)));
-//    painter.fillRect(QRect(0,height() - 50,width() - 50,50),QBrush(QColor(255,0,0,255)));
 }
 

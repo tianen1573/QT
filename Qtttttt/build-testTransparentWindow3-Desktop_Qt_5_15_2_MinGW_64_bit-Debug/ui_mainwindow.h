@@ -14,6 +14,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -30,22 +31,24 @@ public:
     QSpacerItem *verticalSpacer;
     QWidget *widget_3;
     QSpacerItem *verticalSpacer_2;
+    QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(324, 318);
+        MainWindow->resize(896, 579);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         centralwidget->setStyleSheet(QString::fromUtf8(""));
         horizontalLayout = new QHBoxLayout(centralwidget);
         horizontalLayout->setSpacing(0);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
+        horizontalLayout->setContentsMargins(10, 10, 10, 10);
         widget_2 = new QWidget(centralwidget);
         widget_2->setObjectName(QString::fromUtf8("widget_2"));
         widget_2->setMinimumSize(QSize(250, 300));
+        widget_2->setStyleSheet(QString::fromUtf8(""));
 
         horizontalLayout->addWidget(widget_2);
 
@@ -63,6 +66,7 @@ public:
         widget_3 = new QWidget(widget);
         widget_3->setObjectName(QString::fromUtf8("widget_3"));
         widget_3->setMinimumSize(QSize(0, 200));
+        widget_3->setStyleSheet(QString::fromUtf8(""));
 
         verticalLayout->addWidget(widget_3);
 
@@ -74,6 +78,9 @@ public:
         horizontalLayout->addWidget(widget);
 
         MainWindow->setCentralWidget(centralwidget);
+        statusBar = new QStatusBar(MainWindow);
+        statusBar->setObjectName(QString::fromUtf8("statusBar"));
+        MainWindow->setStatusBar(statusBar);
 
         retranslateUi(MainWindow);
 
