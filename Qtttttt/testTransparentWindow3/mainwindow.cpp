@@ -35,8 +35,8 @@ void MainWindow::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(rect(),QBrush(QColor(0,0,0,1)));
 
-    QRect widget2Rect = ui->widget_2->rect().translated(ui->widget_2->mapTo(this, QPoint(0, 0)));
-    QRect widget3Rect = ui->widget_3->rect().translated(ui->widget_3->mapTo(this, QPoint(0, 0)));
+    QRect widget2Rect = ui->widgetBody->rect().translated(ui->widgetBody->mapTo(this, QPoint(0, 0)));
+    QRect widget3Rect = ui->widgetNav->rect().translated(ui->widgetNav->mapTo(this, QPoint(0, 0)));
     int radius = 6;
     QColor backGround(255,255,255,255);
 
@@ -46,11 +46,11 @@ void MainWindow::paintEvent(QPaintEvent *event)
     // 绘制圆角矩形
     painter.drawRoundedRect(widget2Rect, radius, radius);
     // 填充左下角
-    widget2Rect = QRect(ui->widget_2->geometry().x(), ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
+    widget2Rect = QRect(ui->widgetBody->geometry().x(), ui->widgetBody->geometry().y() + ui->widgetBody->geometry().height() - radius, radius, radius);
     painter.fillRect(widget2Rect, backGround);
     // 填充右下角
-    widget2Rect = QRect(ui->widget_2->geometry().x() + ui->widget_2->geometry().width() - radius,  \
-                       ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
+    widget2Rect = QRect(ui->widgetBody->geometry().x() + ui->widgetBody->geometry().width() - radius,  \
+                       ui->widgetBody->geometry().y() + ui->widgetBody->geometry().height() - radius, radius, radius);
     painter.fillRect(widget2Rect, backGround);
 
     // 绘制圆角矩形
@@ -61,7 +61,13 @@ void MainWindow::paintEvent(QPaintEvent *event)
     painter.fillRect(widget3Rect, backGround);
     // 填充左下角
     widget3Rect = QRect(widget3Rect.x(), \
-                        widget3Rect.y() + ui->widget_3->height() - radius, radius, radius);
+                        widget3Rect.y() + ui->widgetNav->height() - radius, radius, radius);
     painter.fillRect(widget3Rect, backGround);
+}
+
+
+void MainWindow::on_pushButton_11_clicked()
+{
+
 }
 
