@@ -26,231 +26,97 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
-    QWidget *widgetBodyidget;
-    QHBoxLayout *horizontalLayout_10;
-    QWidget *widgetHeader;
-    QVBoxLayout *verticalLayout_2;
-    QWidget lab_titleet_4;
-    QHBoxLayout *btn_closeout_11;
-    QPushButton *pusstackedMainWidget   QPushButtwidgetHomepushButton_11;
-    QStackedWidget *stackedWidget;
-    QWidget *widgetSetting    QVBoxLayout *verticalLayout_4;
-    QWidget *widget_5;
-    QVBoxLayout *verticalLayout_3;
-    QWidget *widgetMenu_6;
+    QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
-    QPushButton *pushButton;
-    QLabel *lwidgetNav  QWidget *widget_7;
-    QHBoxLayout *horizontalLayout_2;
-    QPushButton *btn_setting_2;
-    QLabel *label_2;
-    QWidget *widget_8;
-    QHBoxLayout *horizontalLayout_3;
-    QPushButton *pushButton_3;
-    QLabel *label_3;
-    QLabel *label_4;
-    QSpacerItem *verticalSpacer_3;
-    QWidget *page_2;
+    QWidget *widgetBody;
+    QVBoxLayout *verticalLayout_2;
+    QWidget *widgetHeader;
+    QHBoxLayout *horizontalLayout_11;
+    QLabel *lab_title;
+    QPushButton *btn_close;
+    QStackedWidget *stackedMainWidget;
+    QWidget *widgetHome;
+    QVBoxLayout *verticalLayout_4;
+    QWidget *widgetSetting;
     QVBoxLayout *verticalLayout_5;
-    QWidget *widget_9;
-    QVBoxLayout *verticalLayout_6;
-    QLabel *label_10;
-    QLabwidgetBodyl_12;
-    QLabwidgetBodyl_13;
-    QLabwidgetBodyl_17;
-    QLabwidgetBodyl_16;
-    QLabel *label_15;
-    QLabel *label_14;widgetBodyawidget_header*verticalSpacer_4;
-    QWidwidgetHeaderget;
-    QVBowidgetHeader*verticalLayoutwidgetBodypawidgetHeader*verticalSpacer;
-    QWidwidgetHeader;
-    QSpacerItem *verticwidget_header_2;
-    QSwidgetHeader*statusBar;
-widget_headerlab_titleupUi(QMaiwidgetHeaderWindow)
+    QWidget *widgetMenu;
+    QVBoxLayout *verticalLayout;
+    QSpacerItem *verticalSpacer;
+    QWidget *widgetNav;
+    QVBoxLayout *verticalLayout_3;
+    QPushButton *btn_setting;
+    QSpacerItem *verticalSpacer_2;
+    QStatusBar *statusBar;
+
+    void setupUi(QMainWindow *MainWindow)
     {
-        if (MainWindow->objectNamlab_titlesEmpty())
-        btn_closew->setObjectName(QSwidget_headerromUtf8("MainWindow"));
-        btn_closeesize(381, 342);
-        centralwidget = new QWidget(widgetHeader        centralwidget->setObjectName(QSbtn_closef8("centralwidget"));
+        if (MainWindow->objectName().isEmpty())
+            MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
+        MainWindow->resize(500, 724);
+        centralwidget = new QWidget(MainWindow);
+        centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         centralwidget->setStyleSheet(QString::fromUtf8(""));
-        horizontalLayout_10 = new QHBoxLayout(centralwidget);
-        horizontalLayout_10->setSpacwidget_header        horizontalLayout_10->setObjectName(QString::fromUtf8("horizontalLayout_10"));
-        horizontalLayout_10->setContentsMargins(10, 10, 10, 10);
-        widget_2 = new QWidget(centrwidgetHeader      widget_2->setObjectName(QString::fromUtf8("widget_2"));
-        widget_2->setMinimumSize(QSize(250, 300));
-        widget_2->setStyleSheet(QString::fromUtf8(""));
-        stackedMainWidgett_2 = new QVBoxLayout(widget_2);
-        stackedMainWidgetlLayout_2->setSpacing(widgetBody    stackedMainWidgetlLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
-        verticalLayout_2->setContentsMarginwidgetHome 0, 0, 0);
-        widget_4 = new QWidget(widget_2);
-        widget_4->setObjectName(QString::fromUtf8("widget_4"));
-        widget_4->setMinimumSize(QSize(0, 50));
-        widget_4_4->setStyleSheetwidgetHomering::fromUtf8("border-bottom: 1px solid red;"));
-        widgetSettingntalLayout_11 = new QHBoxLayout(widget_4);
-        stackedMainWidgetalLayout_11->setObjectName(widget_4g::fromUtf8("horizontalLayout_11"));
-        pushButton_10 = new QPushButton(widwidgetSetting        pushButton_10->setObjectName(QString::fromUtf8("pushButton_10"));
+        horizontalLayout = new QHBoxLayout(centralwidget);
+        horizontalLayout->setSpacing(0);
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setContentsMargins(10, 10, 10, 10);
+        widgetBody = new QWidget(centralwidget);
+        widgetBody->setObjectName(QString::fromUtf8("widgetBody"));
+        widgetBody->setMinimumSize(QSize(400, 680));
+        widgetBody->setStyleSheet(QString::fromUtf8(""));
+        verticalLayout_2 = new QVBoxLayout(widgetBody);
+        verticalLayout_2->setSpacing(0);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setContentsMargins(0, 0, 0, 0);
+        widgetHeader = new QWidget(widgetBody);
+        widgetHeader->setObjectName(QString::fromUtf8("widgetHeader"));
+        widgetHeader->setMinimumSize(QSize(400, 80));
+        widgetHeader->setStyleSheet(QString::fromUtf8("border-bottom: 1px solid red;"));
+        horizontalLayout_11 = new QHBoxLayout(widgetHeader);
+        horizontalLayout_11->setSpacing(0);
+        horizontalLayout_11->setObjectName(QString::fromUtf8("horizontalLayout_11"));
+        horizontalLayout_11->setContentsMargins(0, 0, 0, 0);
+        lab_title = new QLabel(widgetHeader);
+        lab_title->setObjectName(QString::fromUtf8("lab_title"));
 
-        horizontalLayout_11->addWwidget_4pushButton_10);
+        horizontalLayout_11->addWidget(lab_title);
 
-        pushButton_11 = new QPuswidgetSettingwidget_4);
-        pushButton_11->setObjectName(QString::fromUtf8("pushButton_11"));
+        btn_close = new QPushButton(widgetHeader);
+        btn_close->setObjectName(QString::fromUtf8("btn_close"));
 
-       stackedMainWidgetyout_11->addWidget(pushButton_11);
-
-
-        verticalLayout_2->addWidgestackedMainWidget
-        stackedWidget = new QStackedWidget(widget_2);
-        HomekedWidget->setObjectName(QSwidgetBodyromUtf8("stackedWidget"));
-        HomekedWidget->setStyleSheet(QString::fromUtf8("background-color: rgb(170, 255, 255);"));
-        page = new QWidget();
-        page-HomeObjectName(QString::fromUtf8("page"));
-        verticalLayout_4 = new QVBoxLayout(page);
-        widgetMenualLayout_4->setSpacing(0);
-        widgetMenualLayout_4->setObHomeName(QString::fromUtf8("verticalLayout_4"));
-        widgetMenualLayout_4->setContentsMargins(0, 0, 0, 0);
-        widget_5 = new QWidget(page);
-   widgetMenuidget_5->setObjectName(QString::fromUtf8("widget_5"));
-        verticalLayout_3 = new QVBoxLayout(widget_5);
-        verticalLayout_3->setSpacing(0);
-        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
-        verticalLayout_3->setContentsMargins(0, 0, 0, 0);
-        widget_6 = new QWidget(widget_5);
-        widget_6->setObjectName(QString::fromUtf8("widget_6"));
-        widgetNavalLayout = new widgetMenuayout(widget_6);
-        widgetNavalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        widgetNavon = new QPushButton(widget_6);
-        widgetNavon->setObjectName(QString::fromUtf8("pushButton"));
-
-        horizontalLayout->addWidgewidgetNavtton);
-
-        label = new QLabel(widget_6);
-        label->setObjectName(QString::fromUtf8("label"));
-
-       btbtn_settingLayout->addWidget(label);
+        horizontalLayout_11->addWidget(btn_close);
 
 
-        verticalLayout_3->addWidgetbtn_settingenu);
+        verticalLayout_2->addWidget(widgetHeader);
 
-        widget_7 = new QWidget(widget_5);
-        stackedMainWidgetObjectName(QString::fromUtf8("widget_7"));
-        horizontalLayout_2 = new QHBoxLayout(widget_7);
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        lab_titleutton_2 = new QPushButton(widget_7);
-        btn_close>setObjectName(QString::fromUtf8("pushButton_2"));
-
-        horizontalLayout_2->addWidget(pushButton_2);
-
-        label_2 = new QLabel(widget_7);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-
-        horizontalLayout_2->addWidget(label_2);
-
-
-        verticalLayout_3->addWidget(widget_7);
-
-        widget_8 = new QWidget(widget_5);
-        widget_8->setObjectName(QString::fromUtf8("widget_8"));
-        horizontalLayout_3 = new QHBoxLayout(widget_8);
-        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
-        pushButton_3 = new QPushButton(widget_8);
-        pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
-
-        horizontalLayout_3->addWidget(pushButton_3);
-
-        label_3 = new QLabel(widget_8);
-        btn_settingetObjectName(QString::fromUtf8("label_3"));
-
-        horizontalLayout_3->addWidget(label_3);
-
-
-        verticalLayout_3->addWidget(widget_8);
-
-        label_4 = new QLabel(widget_5);
-        label_4->setObjectName(QString::fromUtf8("label_4"));
-        label_4->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
-
-        verticalLayout_3->addWidget(label_4);
-
-        verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-        verticalLayout_3->addItem(verticalSpacer_3);
-
-
-        verticalLayout_4->addWidgHomeidget_5);
-
-        stackedWidget->addWidget(page);
-        page_2 = new QWidget();
-        page_2->setObjectName(QString::fromUtf8("page_2"));
-        verticalLayout_5 = new QVBoxLayout(page_2);
+        stackedMainWidget = new QStackedWidget(widgetBody);
+        stackedMainWidget->setObjectName(QString::fromUtf8("stackedMainWidget"));
+        stackedMainWidget->setMinimumSize(QSize(400, 600));
+        stackedMainWidget->setStyleSheet(QString::fromUtf8("background-color: rgb(170, 255, 255);"));
+        widgetHome = new QWidget();
+        widgetHome->setObjectName(QString::fromUtf8("widgetHome"));
+        verticalLayout_4 = new QVBoxLayout(widgetHome);
+        verticalLayout_4->setSpacing(0);
+        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        verticalLayout_4->setContentsMargins(0, 0, 0, 0);
+        stackedMainWidget->addWidget(widgetHome);
+        widgetSetting = new QWidget();
+        widgetSetting->setObjectName(QString::fromUtf8("widgetSetting"));
+        verticalLayout_5 = new QVBoxLayout(widgetSetting);
         verticalLayout_5->setSpacing(0);
         verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
         verticalLayout_5->setContentsMargins(0, 0, 0, 0);
-        widget_9 = new QWidget(page_2);
-        widget_9->setObjectName(QString::fromUtf8("widget_9"));
-        widget_9->setMinimumSize(QSize(0, 1000));
-        widget_9->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
-        verticalLayout_6 = new QVBoxLayout(widget_9);
-        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
-        label_10 = new QLabel(widget_9);
-        label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setMinimumSize(QSize(0, 50));
+        stackedMainWidget->addWidget(widgetSetting);
 
-        verticalLayout_6->addWidget(label_10);
-
-        label_12 = new QLabel(widget_9);
-        label_12->setObjectName(QString::fromUtf8("label_12"));
-        label_12->setMinimumSize(QSize(0, 50));
-
-        verticalLayout_6->addWidget(label_12);
-
-        label_13 = new QLabel(widget_9);
-        label_13->setObjectName(QString::fromUtf8("label_13"));
-        label_13->setMinimumSize(QSize(0, 20));
-
-        verticalLayout_6->addWidget(label_13);
-
-        label_17 = new QLabel(widget_9);
-        label_17->setObjectName(QString::fromUtf8("label_17"));
-        label_17->setMinimumSize(QSize(0, 50));
-
-        verticalLayout_6->addWidget(label_17);
-
-        label_16 = new QLabel(widget_9);
-        label_16->setObjectName(QString::fromUtf8("label_16"));
-        label_16->setMinimumSize(QSize(0, 50));
-
-        verticalLayout_6->addWidget(label_16);
-
-        label_15 = new QLabel(widget_9);
-        label_15->setObjectName(QString::fromUtf8("label_15"));
-        label_15->setMinimumSize(QSize(0, 50));
-
-        verticalLayout_6->addWidget(label_15);
-
-        label_14 = new QLabel(widget_9);
-        label_14->setObjectName(QString::fromUtf8("label_14"));
-        label_14->setMinimumSize(QSize(0, 50));
-
-        verticalLayout_6->addWidget(label_14);
+        verticalLayout_2->addWidget(stackedMainWidget);
 
 
-        verticalLayout_5->addWidget(widget_9);
+        horizontalLayout->addWidget(widgetBody);
 
-        verticalSpacer_4 = new QSpacerItem(20, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        verticalLayout_5->addItem(verticalSpacer_4);
-
-        stackedWidget->addWidget(page_2);
-
-        verticalLayout_2->addWidget(stackedWidget);
-
-
-        horizontalLayout_10->addWidget(widget_2);
-
-        widget = new QWidget(centralwidget);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setMinimumSize(QSize(50, 300));
-        verticalLayout = new QVBoxLayout(widget);
+        widgetMenu = new QWidget(centralwidget);
+        widgetMenu->setObjectName(QString::fromUtf8("widgetMenu"));
+        widgetMenu->setMinimumSize(QSize(80, 300));
+        verticalLayout = new QVBoxLayout(widgetMenu);
         verticalLayout->setSpacing(0);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
@@ -258,19 +124,30 @@ widget_headerlab_titleupUi(QMaiwidgetHeaderWindow)
 
         verticalLayout->addItem(verticalSpacer);
 
-        widget_3 = new QWidget(widget);
-        widget_3->setObjectName(QString::fromUtf8("widget_3"));
-        widget_3->setMinimumSize(QSize(0, 200));
-        widget_3->setStyleSheet(QString::fromUtf8(""));
+        widgetNav = new QWidget(widgetMenu);
+        widgetNav->setObjectName(QString::fromUtf8("widgetNav"));
+        widgetNav->setMinimumSize(QSize(80, 300));
+        widgetNav->setStyleSheet(QString::fromUtf8(""));
+        verticalLayout_3 = new QVBoxLayout(widgetNav);
+        verticalLayout_3->setSpacing(0);
+        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+        verticalLayout_3->setContentsMargins(10, 10, 10, 10);
+        btn_setting = new QPushButton(widgetNav);
+        btn_setting->setObjectName(QString::fromUtf8("btn_setting"));
+        btn_setting->setMinimumSize(QSize(60, 60));
+        btn_setting->setMaximumSize(QSize(60, 60));
 
-        verticalLayout->addWidget(widget_3);
+        verticalLayout_3->addWidget(btn_setting);
+
+
+        verticalLayout->addWidget(widgetNav);
 
         verticalSpacer_2 = new QSpacerItem(20, 56, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         verticalLayout->addItem(verticalSpacer_2);
 
 
-        horizontalLayout_10->addWidget(widget);
+        horizontalLayout->addWidget(widgetMenu);
 
         MainWindow->setCentralWidget(centralwidget);
         statusBar = new QStatusBar(MainWindow);
@@ -278,8 +155,9 @@ widget_headerlab_titleupUi(QMaiwidgetHeaderWindow)
         MainWindow->setStatusBar(statusBar);
 
         retranslateUi(MainWindow);
+        QObject::connect(btn_close, SIGNAL(clicked()), MainWindow, SLOT(close()));
 
-        stackedWidget->setCurrentIndex(1);
+        stackedMainWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -288,22 +166,9 @@ widget_headerlab_titleupUi(QMaiwidgetHeaderWindow)
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        pushButton_10->setText(QCoreApplication::translate("MainWindow", "s1", nullptr));
-        pushButton_11->setText(QCoreApplication::translate("MainWindow", "s2", nullptr));
-        pushButton->setText(QCoreApplication::translate("MainWindow", "PushButton", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        pushButton_2->setText(QCoreApplication::translate("MainWindow", "PushButton", nullptr));
-        label_2->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        pushButton_3->setText(QCoreApplication::translate("MainWindow", "PushButton", nullptr));
-        label_3->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        label_4->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        label_10->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        label_12->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        label_13->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        label_17->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        label_16->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        label_15->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        label_14->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
+        lab_title->setText(QCoreApplication::translate("MainWindow", "TEST_TIGER", nullptr));
+        btn_close->setText(QCoreApplication::translate("MainWindow", "CLose", nullptr));
+        btn_setting->setText(QCoreApplication::translate("MainWindow", "setting", nullptr));
     } // retranslateUi
 
 };
