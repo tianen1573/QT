@@ -6,6 +6,9 @@ WidgetSettingMain::WidgetSettingMain(QWidget *parent)
     , ui(new Ui::WidgetSettingMain)
 {
     ui->setupUi(this);
+
+
+    ui->btn_test;
 }
 
 WidgetSettingMain::~WidgetSettingMain()

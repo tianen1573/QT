@@ -13,7 +13,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QListView>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
@@ -29,7 +29,14 @@ public:
     QSpacerItem *horizontalSpacer;
     QLabel *label;
     QSpacerItem *horizontalSpacer_2;
-    QListView *listView;
+    QWidget *widget;
+    QVBoxLayout *verticalLayout_2;
+    QPushButton *btn_test_5;
+    QPushButton *btn_test_4;
+    QPushButton *btn_test_3;
+    QPushButton *btn_test_2;
+    QPushButton *btn_test;
+    QSpacerItem *verticalSpacer;
 
     void setupUi(QWidget *WidgetSettingMain)
     {
@@ -62,11 +69,49 @@ public:
 
         verticalLayout->addWidget(widgetTitle);
 
-        listView = new QListView(WidgetSettingMain);
-        listView->setObjectName(QString::fromUtf8("listView"));
-        listView->setMinimumSize(QSize(400, 520));
+        widget = new QWidget(WidgetSettingMain);
+        widget->setObjectName(QString::fromUtf8("widget"));
+        widget->setMinimumSize(QSize(0, 0));
+        verticalLayout_2 = new QVBoxLayout(widget);
+        verticalLayout_2->setSpacing(0);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setContentsMargins(0, 0, 0, 0);
+        btn_test_5 = new QPushButton(widget);
+        btn_test_5->setObjectName(QString::fromUtf8("btn_test_5"));
+        btn_test_5->setMinimumSize(QSize(60, 60));
 
-        verticalLayout->addWidget(listView);
+        verticalLayout_2->addWidget(btn_test_5);
+
+        btn_test_4 = new QPushButton(widget);
+        btn_test_4->setObjectName(QString::fromUtf8("btn_test_4"));
+        btn_test_4->setMinimumSize(QSize(60, 60));
+
+        verticalLayout_2->addWidget(btn_test_4);
+
+        btn_test_3 = new QPushButton(widget);
+        btn_test_3->setObjectName(QString::fromUtf8("btn_test_3"));
+        btn_test_3->setMinimumSize(QSize(60, 60));
+
+        verticalLayout_2->addWidget(btn_test_3);
+
+        btn_test_2 = new QPushButton(widget);
+        btn_test_2->setObjectName(QString::fromUtf8("btn_test_2"));
+        btn_test_2->setMinimumSize(QSize(60, 60));
+
+        verticalLayout_2->addWidget(btn_test_2);
+
+        btn_test = new QPushButton(widget);
+        btn_test->setObjectName(QString::fromUtf8("btn_test"));
+        btn_test->setMinimumSize(QSize(60, 60));
+
+        verticalLayout_2->addWidget(btn_test);
+
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout_2->addItem(verticalSpacer);
+
+
+        verticalLayout->addWidget(widget);
 
 
         retranslateUi(WidgetSettingMain);
@@ -78,6 +123,11 @@ public:
     {
         WidgetSettingMain->setWindowTitle(QCoreApplication::translate("WidgetSettingMain", "Form", nullptr));
         label->setText(QCoreApplication::translate("WidgetSettingMain", "SETTING", nullptr));
+        btn_test_5->setText(QCoreApplication::translate("WidgetSettingMain", "PushButton", nullptr));
+        btn_test_4->setText(QCoreApplication::translate("WidgetSettingMain", "PushButton", nullptr));
+        btn_test_3->setText(QCoreApplication::translate("WidgetSettingMain", "PushButton", nullptr));
+        btn_test_2->setText(QCoreApplication::translate("WidgetSettingMain", "PushButton", nullptr));
+        btn_test->setText(QCoreApplication::translate("WidgetSettingMain", "PushButton", nullptr));
     } // retranslateUi
 
 };
