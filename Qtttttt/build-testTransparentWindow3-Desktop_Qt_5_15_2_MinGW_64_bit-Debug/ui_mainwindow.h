@@ -17,7 +17,6 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStackedWidget>
-#include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -46,13 +45,12 @@ public:
     QVBoxLayout *verticalLayout_3;
     QPushButton *btn_setting;
     QSpacerItem *verticalSpacer_2;
-    QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(500, 724);
+        MainWindow->resize(552, 750);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         centralwidget->setStyleSheet(QString::fromUtf8(""));
@@ -92,7 +90,7 @@ public:
         stackedMainWidget = new QStackedWidget(widgetBody);
         stackedMainWidget->setObjectName(QString::fromUtf8("stackedMainWidget"));
         stackedMainWidget->setMinimumSize(QSize(400, 600));
-        stackedMainWidget->setStyleSheet(QString::fromUtf8("background-color: rgb(170, 255, 255);"));
+        stackedMainWidget->setStyleSheet(QString::fromUtf8(""));
         widgetHome = new QWidget();
         widgetHome->setObjectName(QString::fromUtf8("widgetHome"));
         verticalLayout_4 = new QVBoxLayout(widgetHome);
@@ -150,9 +148,6 @@ public:
         horizontalLayout->addWidget(widgetMenu);
 
         MainWindow->setCentralWidget(centralwidget);
-        statusBar = new QStatusBar(MainWindow);
-        statusBar->setObjectName(QString::fromUtf8("statusBar"));
-        MainWindow->setStatusBar(statusBar);
 
         retranslateUi(MainWindow);
         QObject::connect(btn_close, SIGNAL(clicked()), MainWindow, SLOT(close()));
