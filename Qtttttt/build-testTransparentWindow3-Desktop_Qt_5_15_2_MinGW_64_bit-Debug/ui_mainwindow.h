@@ -17,6 +17,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStackedWidget>
+#include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -45,19 +46,20 @@ public:
     QVBoxLayout *verticalLayout_3;
     QPushButton *btn_setting;
     QSpacerItem *verticalSpacer_2;
+    QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(552, 750);
+        MainWindow->resize(520, 742);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         centralwidget->setStyleSheet(QString::fromUtf8(""));
         horizontalLayout = new QHBoxLayout(centralwidget);
         horizontalLayout->setSpacing(0);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        horizontalLayout->setContentsMargins(10, 10, 10, 10);
+        horizontalLayout->setContentsMargins(20, 20, 20, 20);
         widgetBody = new QWidget(centralwidget);
         widgetBody->setObjectName(QString::fromUtf8("widgetBody"));
         widgetBody->setMinimumSize(QSize(400, 680));
@@ -148,6 +150,9 @@ public:
         horizontalLayout->addWidget(widgetMenu);
 
         MainWindow->setCentralWidget(centralwidget);
+        statusBar = new QStatusBar(MainWindow);
+        statusBar->setObjectName(QString::fromUtf8("statusBar"));
+        MainWindow->setStatusBar(statusBar);
 
         retranslateUi(MainWindow);
         QObject::connect(btn_close, SIGNAL(clicked()), MainWindow, SLOT(close()));

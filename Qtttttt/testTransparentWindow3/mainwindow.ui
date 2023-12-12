@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>552</width>
-    <height>750</height>
+    <width>520</width>
+    <height>742</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,16 +22,16 @@
      <number>0</number>
     </property>
     <property name="leftMargin">
-     <number>10</number>
+     <number>20</number>
     </property>
     <property name="topMargin">
-     <number>10</number>
+     <number>20</number>
     </property>
     <property name="rightMargin">
-     <number>10</number>
+     <number>20</number>
     </property>
     <property name="bottomMargin">
-     <number>10</number>
+     <number>20</number>
     </property>
     <item>
      <widget class="QWidget" name="widgetBody" native="true">
@@ -265,6 +265,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <resources/>
  <connections>

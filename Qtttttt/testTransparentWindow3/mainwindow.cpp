@@ -18,14 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
     ui->setupUi(this);
 
-    // // 创建阴影效果对象
-    // QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(this);
-    // shadowEffect->setBlurRadius(10); // 设置阴影的模糊半径
-    // shadowEffect->setColor(Qt::red); // 设置阴影的颜色
-    // shadowEffect->setOffset(0, 0); // 设置阴影的偏移量
-    // // 将阴影效果应用于 主窗口，此时阴影效果将作用在主窗口所在区域，最底层的且最先有颜色的位置
-    // this->setGraphicsEffect(shadowEffect);
-
     // ui->stackedMainWidget->removeWidget(ui->widgetSetting);
 
 }
@@ -33,6 +25,19 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event) {
+    QSize newSize = event->size();
+    qDebug() << event->size().width() << event->size().height() << "before";
+    int width = (int)((float)newSize.height() / 72 * 52);
+//    if(event->size().width() == width){
+//        m_isOk = true;
+//    } else {
+//        m_isOk = false;
+//    }
+    this->resize(width, newSize.height());
+    qDebug() << event->size().width() << event->size().height() << "after";
 }
 
 double normalDistribution(double x) {
@@ -182,4 +187,38 @@ void MainWindow::paintEvent(QPaintEvent *event)
         if(i == 0)
             painter.fillPath(mergedPath, backGround);
     }
+}
+
+
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        // 记录鼠标按下时的位置
+        m_dragStartPosition = event->globalPos();
+        // 设置拖动标志
+        m_isDragging = true;
+    }
+    QMainWindow::mousePressEvent(event);
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if (m_isDragging) {
+        // 计算鼠标移动的距离
+        QPoint distance = event->globalPos() - m_dragStartPosition;
+        // 更新主窗口的位置
+        move(pos() + distance);
+        // 更新鼠标按下的位置
+        m_dragStartPosition = event->globalPos();
+    }
+    QMainWindow::mouseMoveEvent(event);
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        // 清除拖动标志
+        m_isDragging = false;
+    }
+    QMainWindow::mouseReleaseEvent(event);
 }
