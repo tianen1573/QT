@@ -737,7 +737,7 @@ BackupMaker {
 >   ![image-20231213164815195](QtNote.assets/image-20231213164815195.png)
 >
 >   ~~~C++
->   
+>     
 >    // 绘制圆角矩形
 >    painter.drawRoundedRect(widget2Rect, radius, radius);
 >    // 填充左下角
@@ -747,7 +747,7 @@ BackupMaker {
 >    widget2Rect = QRect(ui->widget_2->geometry().x() + ui->widget_2->geometry().width() - radius,  \
 >                       ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
 >    painter.fillRect(widget2Rect, backGround);
->   
+>     
 >    // 绘制圆角矩形
 >    painter.drawRoundedRect(widget3Rect, radius, radius);
 >    // 填充左上角
@@ -758,7 +758,7 @@ BackupMaker {
 >    widget3Rect = QRect(widget3Rect.x(), \
 >                        widget3Rect.y() + ui->widget_3->height() - radius, radius, radius);
 >    painter.fillRect(widget3Rect, backGround);
->   
+>     
 >   ~~~
 >
 >   
@@ -772,7 +772,7 @@ BackupMaker {
 >       // 透明背景+无边框， 一般在构造函数设置
 >       // setWindowFlag(Qt::FramelessWindowHint);
 >       // setAttribute(Qt::WA_TranslucentBackground);
->       
+>         
 >       // 创建临时绘图设备
 >       QPixmap buffer(size());
 >       // 将临时绘图设备转换为 QImage
@@ -782,14 +782,14 @@ BackupMaker {
 >       painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
 >       painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 >       painter.fillRect(rect(),QBrush(QColor(0,0,0,1))); // 透明背景
->   
+>     
 >       QRect widgetBody = ui->widget_2->rect().translated(ui->widget_2->mapTo(this, QPoint(0, 0)));
 >       QRect widgetNav = ui->widget_nav->rect().translated(ui->widget_nav->mapTo(this, QPoint(0, 0)));
 >       QColor backGround(255,255,255,255);
->   
+>     
 >   //    qDebug() << centralWidget()->x() << centralWidget()->y();
 >   //    qDebug() << widgetBody.x() << widgetBody.y();
->   
+>     
 >       for(int i = 10; i >= 0; -- i)
 >       {
 >           QRect leftRect(widgetBody.x() - i, widgetBody.y() - i, widgetBody.width() + i * 2, widgetBody.height() + i * 2);
@@ -798,10 +798,10 @@ BackupMaker {
 >           leftPath.addRoundedRect(leftRect, i + 5, i + 5);
 >           rigPath.addRoundedRect(rigRect, i + 5, i + 5);
 >           QPainterPath mergedPath = leftPath.united(rigPath);
->   
+>     
 >           int alpha = (int)normalDistribution(i + 3);
 >           QColor color(168, 168, 168, alpha);
->   
+>     
 >           painter.setPen(color);
 >           if(i == 10)
 >               painter.setPen(Qt::red);
@@ -811,7 +811,7 @@ BackupMaker {
 >           if(i == 0)
 >               painter.fillPath(mergedPath, backGround);
 >       }
->   
+>     
 >       // 将临时绘图设备的内容绘制到窗口上
 >       QPainter windowPainter(this);
 >       windowPainter.drawPixmap(0, 0, buffer);
@@ -847,11 +847,11 @@ BackupMaker {
 >       QPainter painter(this);
 >       painter.setRenderHint(QPainter::Antialiasing);
 >       painter.fillRect(rect(),QBrush(QColor(0,0,0,1)));
->   
+>     
 >       QRect widgetBody = ui->widgetBody->rect().translated(ui->widgetBody->mapTo(this, QPoint(0, 0)));
 >       QRect widgetNav = ui->widgetNav->rect().translated(ui->widgetNav->mapTo(this, QPoint(0, 0)));
 >       QColor backGround(255,255,255,255);
->   
+>     
 >       for(int i = 10; i >= 0; -- i)
 >       {
 >           QRect leftRect(widgetBody.x() - i, widgetBody.y() - i, widgetBody.width() + i * 2, widgetBody.height() + i * 2);
@@ -860,10 +860,10 @@ BackupMaker {
 >           leftPath.addRoundedRect(leftRect, i + 5, i + 5);
 >           rigPath.addRoundedRect(rigRect, i + 5, i + 5);
 >           QPainterPath mergedPath = leftPath.united(rigPath);
->   
+>     
 >           int alpha = (int)normalDistribution(i + 3);
 >           QColor color(168, 168, 168, alpha);
->   
+>     
 >           painter.setPen(color);
 >           if(i == 10)
 >               painter.setPen(Qt::red);
@@ -2870,3 +2870,100 @@ https://www.hardcode.today/macos-app-zi-dong-sheng-ji-shi-xian.html
 > ![image-20231128105247755](QtNote.assets/image-20231128105247755.png)
 >
 
+
+
+# 更改
+
+    // MainWindow.cpp 330
+    for(int i = 10; i >= 0; -- i)
+    {
+        // 主体，侧边栏，主体左下，主体右下
+        QRect leftRect(widgetBody.x() - i, widgetBody.y() - i, widgetBody.width() + i * 2, widgetBody.height() + i * 2);
+        QRect rigRect(widgetNav.x() - i - 5, widgetNav.y() - i, widgetNav.width() + i * 2 + 5, widgetNav.height() + i * 2);
+        QRect bottomLeftRect(leftRect.x(), leftRect.y() +  leftRect.height() - (i + 5), i + 5, i + 5); // x 不变，y下移
+        QRect bottomRightRect(leftRect.x() + leftRect.width() - (i + 5), leftRect.y() + leftRect.height() - (i + 5), i + 5, i + 5); // x 右移，y下移
+        QPainterPath leftPath, rigPath, bottomLeftPath, bottomRightPath;
+        leftPath.addRoundedRect(leftRect, i + 5, i + 5);
+        bottomLeftPath.addRect(bottomLeftRect);
+        bottomRightPath.addRect(bottomRightRect);
+        rigPath.addRoundedRect(rigRect, i + 5, i + 5);
+        QPainterPath mergedPath = leftPath.united(bottomLeftPath).united(bottomRightPath).united(rigPath);
+    
+        int alpha = (int)normalDistribution(i + 3);
+        QColor color(168, 168, 168, alpha);
+    
+        painter.setPen(color);
+        if(i == 10)
+            painter.setPen(Qt::red);
+        if(i == 0)
+            painter.setPen(Qt::blue);
+        painter.drawPath(mergedPath);
+        if(i == 0)
+            painter.fillPath(mergedPath, backGround);
+    }
+    
+    
+    
+    MainWindow::MainWindow(QWidget *parent)
+        : MainWindowClass(parent)
+        , m_isFullScreen(false) // 是否全屏
+        , m_isTop(false) // 是否保持显示在所有窗口之上
+        , m_enableVlMouse(false) // 是否启用虚拟键盘
+        , m_recording(false) // 是否开启录屏
+        , ui(new Ui::MainWindow)
+    {
+    //    QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
+    
+        ui->setupUi(this);
+    
+        // 透明背景+无边框
+        setWindowFlag(Qt::FramelessWindowHint);
+        setAttribute(Qt::WA_TranslucentBackground);
+        ui->centralwidget->setContentsMargins(20, 20, 20, 20); // 设置边距，用来显示阴影效果
+        // this->m_width = 430;
+        // this->m_height = 720;
+        // 增加了40的边距，高度额外增加了5
+        this->m_width = 470;
+        this->m_height = 780;
+        this->m_scale = 1.0 * (float)this->m_height / (float)this->m_width; // 记录初始比例
+    
+        GlobalReferences::instance()->setMainWindow(this); // 设置主窗口变量
+    
+        this->setCaptionHeight(54 + 20); // 设置标题栏有效范围，用于拖动窗口， 20为阴影区域
+        this->enableScale(true); // 设置窗口可缩放
+        this->setFocusPolicy(Qt::StrongFocus); // 确保窗口或控件能够主动接收焦点
+    
+        // 用于接收鼠标移动事件，该属性不遗传，所以需要给子部件单独设置
+        this->setMouseTracking(true);
+        centralWidget()->setMouseTracking(true);
+        ui->stackedWidget->setMouseTracking(true);
+    
+        this->m_workAgg = new WorkMirroringAggergation(this, ui->stackedWidget);
+    
+        // 连接槽
+        connect(this, &MainWindow::clickStore, this->m_workAgg, &WorkMirroringAggergation::onClickStore);
+        connect(this, &MainWindow::clickMouse, this->m_workAgg, &WorkMirroringAggergation::onClickMouse);
+        connect(this, &MainWindow::clickNew, this->m_workAgg, &WorkMirroringAggergation::onClickNew);
+        connect(this, &MainWindow::clickScreenshot, this->m_workAgg, &WorkMirroringAggergation::onClickScreenshot);
+        connect(this, &MainWindow::clickRecord, this->m_workAgg, &WorkMirroringAggergation::onClickRecord);
+        connect(this, &MainWindow::clickSetting, this->m_workAgg, &WorkMirroringAggergation::onClickSetting);
+        connect(this, &MainWindow::clickBack, this->m_workAgg, &WorkMirroringAggergation::onClickBack);
+        connect(this, &MainWindow::clickMain, this->m_workAgg, &WorkMirroringAggergation::onClickMain);
+        connect(this, &MainWindow::clickBackend, this->m_workAgg, &WorkMirroringAggergation::onClickBackend);
+        connect(this, &MainWindow::keyPress, this->m_workAgg, &WorkMirroringAggergation::onKeyPress);
+        connect(this, &MainWindow::keyRelease, this->m_workAgg, &WorkMirroringAggergation::onKeyRelease);
+        connect(this, &MainWindow::mouseMove, this->m_workAgg, &WorkMirroringAggergation::onMouseMove);
+        connect(this, &MainWindow::mousePress, this->m_workAgg, &WorkMirroringAggergation::onMousePress);
+        connect(this, &MainWindow::mouseRelease, this->m_workAgg, &WorkMirroringAggergation::onMouseRelease);
+    
+        this->m_workAgg->start();
+    }
+    
+
+![image-20231213230123172](%E5%9B%BE%E7%89%87/QtNote/image-20231213230123172.png)
+
+![image-20231213232058233](%E5%9B%BE%E7%89%87/QtNote/image-20231213232058233.png)
+
+![image-20231213232147014](%E5%9B%BE%E7%89%87/QtNote/image-20231213232147014.png)
+
+![image-20231213232156079](%E5%9B%BE%E7%89%87/QtNote/image-20231213232156079.png)
