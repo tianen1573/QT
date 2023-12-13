@@ -31,12 +31,13 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     QSize newSize = event->size();
     qDebug() << event->size().width() << event->size().height() << "before";
     int width = (int)((float)newSize.height() / 72 * 52);
-//    if(event->size().width() == width){
-//        m_isOk = true;
-//    } else {
-//        m_isOk = false;
-//    }
-    this->resize(width, newSize.height());
+    int height = (int)((float)newSize.width() / 52 * 72);
+
+    if(width > newSize.width()) {
+        this->resize(newSize.width(), height);
+    } else {
+        this->resize(width, newSize.height());
+    }
     qDebug() << event->size().width() << event->size().height() << "after";
 }
 

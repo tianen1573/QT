@@ -699,100 +699,194 @@ BackupMaker {
 >
 > ![image-20231205150459815](QtNote.assets/image-20231205150459815.png)
 
-### 不规则透明窗口+阴影效果+自定义圆角
+### 自定义圆角
 
-![image-20231206224658098](%E5%9B%BE%E7%89%87/QtNote/image-20231206224658098.png)
-
-![image-20231206224722455](%E5%9B%BE%E7%89%87/QtNote/image-20231206224722455.png)
-
-> 通过绘制实现假透明
+> **先生成四个圆角，再用小矩形将不需要的圆角填充**
 >
-> 绘制圆角矩形区域+填充不需要的圆角
->
-> 添加阴影效果
+> ![image-20231206224658098](QtNote.assets/image-20231206224658098.png)
 >
 > ~~~C++
-> #include "mainwindow.h"
-> #include "ui_mainwindow.h"
-> #include <QPainter>
-> #include <QGraphicsDropShadowEffect>
+>  // 绘制圆角矩形
+>  painter.drawRoundedRect(widget2Rect, radius, radius);
+>  // 填充左下角
+>  widget2Rect = QRect(ui->widget_2->geometry().x(), ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
+>  painter.fillRect(widget2Rect, backGround);
+>  // 填充右下角
+>  widget2Rect = QRect(ui->widget_2->geometry().x() + ui->widget_2->geometry().width() - radius,  \
+>                     ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
+>  painter.fillRect(widget2Rect, backGround);
 > 
-> MainWindow::MainWindow(QWidget *parent)
->     : QMainWindow(parent)
->     , ui(new Ui::MainWindow)
-> {
-> 
->     //QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint)
-> 
->     setWindowFlag(Qt::FramelessWindowHint);
->     setAttribute(Qt::WA_TranslucentBackground);
->     ui->setupUi(this);
-> 
->     // 创建阴影效果对象
->     QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(this);
->     shadowEffect->setBlurRadius(10); // 设置阴影的模糊半径
->     shadowEffect->setColor(Qt::red); // 设置阴影的颜色
->     shadowEffect->setOffset(0, 0); // 设置阴影的偏移量
->     // 将阴影效果应用于 主窗口，此时阴影效果将作用在主窗口所在区域，最底层的且最先有颜色的位置
->     this->setGraphicsEffect(shadowEffect);
-> 
-> }
-> 
-> MainWindow::~MainWindow()
-> {
->     delete ui;
-> }
-> 
-> void MainWindow::paintEvent(QPaintEvent *event)
-> {
->     QPainter painter(this);
->     painter.setRenderHint(QPainter::Antialiasing);
->     painter.fillRect(rect(),QBrush(QColor(0,0,0,1)));
-> 
->     QRect widget2Rect = ui->widget_2->rect().translated(ui->widget_2->mapTo(this, QPoint(0, 0)));
->     QRect widget3Rect = ui->widget_3->rect().translated(ui->widget_3->mapTo(this, QPoint(0, 0)));
->     int radius = 6;
->     QColor backGround(255,255,255,255);
-> 
->     painter.setBrush(backGround); // 设置矩形的填充颜色
->     painter.setPen(Qt::transparent); // 设置边框颜色为透明
-> 
->     // 绘制圆角矩形
->     painter.drawRoundedRect(widget2Rect, radius, radius);
->     // 填充左下角
->     widget2Rect = QRect(ui->widget_2->geometry().x(), ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
->     painter.fillRect(widget2Rect, backGround);
->     // 填充右下角
->     widget2Rect = QRect(ui->widget_2->geometry().x() + ui->widget_2->geometry().width() - radius,  \
->                        ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
->     painter.fillRect(widget2Rect, backGround);
-> 
->     // 绘制圆角矩形
->     painter.drawRoundedRect(widget3Rect, radius, radius);
->     // 填充左上角
->     widget3Rect.setHeight(radius);
->     widget3Rect.setWidth(radius);
->     painter.fillRect(widget3Rect, backGround);
->     // 填充左下角
->     widget3Rect = QRect(widget3Rect.x(), \
->                         widget3Rect.y() + ui->widget_3->height() - radius, radius, radius);
->     painter.fillRect(widget3Rect, backGround);
-> }
-> 
+>  // 绘制圆角矩形
+>  painter.drawRoundedRect(widget3Rect, radius, radius);
+>  // 填充左上角
+>  widget3Rect.setHeight(radius);
+>  widget3Rect.setWidth(radius);
+>  painter.fillRect(widget3Rect, backGround);
+>  // 填充左下角
+>  widget3Rect = QRect(widget3Rect.x(), \
+>                      widget3Rect.y() + ui->widget_3->height() - radius, radius, radius);
+>  painter.fillRect(widget3Rect, backGround);
 > 
 > ~~~
+
+### 不规则透明窗口
+
+> **重点是确定填充的区域和逻辑，且需要与透明背景相配合**
 >
-> **步骤：**
+> - 多次填充区域，需要考虑覆盖顺序
+>   ![image-20231213164815195](QtNote.assets/image-20231213164815195.png)
 >
-> - 需要将主窗口的背景色设置为**透明**，并且设置为**无边框**
-> - 在主窗口区域绘制一个**假透明**，全透明会穿透鼠标
-> - 根据需要绘制出其他背景色，比如上述的不规则窗口，就绘制出了两个区域
-> - 根据需要绘制背景色时，可以设置圆角矩形，然后再根据需要填充不需要的圆角，实现自定义圆角
-> - 设置阴影效果时，组件必须有背景色才会显示阴影效果。如组件没有背景色，则会将阴影效果设置在，在该组件窗口区域最接近底层有背景颜色的区域上(测试出来的，不保真)。
+>   ~~~C++
+>   
+>    // 绘制圆角矩形
+>    painter.drawRoundedRect(widget2Rect, radius, radius);
+>    // 填充左下角
+>    widget2Rect = QRect(ui->widget_2->geometry().x(), ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
+>    painter.fillRect(widget2Rect, backGround);
+>    // 填充右下角
+>    widget2Rect = QRect(ui->widget_2->geometry().x() + ui->widget_2->geometry().width() - radius,  \
+>                       ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
+>    painter.fillRect(widget2Rect, backGround);
+>   
+>    // 绘制圆角矩形
+>    painter.drawRoundedRect(widget3Rect, radius, radius);
+>    // 填充左上角
+>    widget3Rect.setHeight(radius);
+>    widget3Rect.setWidth(radius);
+>    painter.fillRect(widget3Rect, backGround);
+>    // 填充左下角
+>    widget3Rect = QRect(widget3Rect.x(), \
+>                        widget3Rect.y() + ui->widget_3->height() - radius, radius, radius);
+>    painter.fillRect(widget3Rect, backGround);
+>   
+>   ~~~
 >
-> **其他：**
+>   
 >
-> - 不规则透明窗口，通过设置主窗口图片遮罩，也能实现？
+> - 生成路径，单次填充区域
+>   ![image-20231213165010438](QtNote.assets/image-20231213165010438.png)
+>
+>   ~~~C++
+>   void MainWindow::paintEvent(QPaintEvent *event)
+>   {
+>       // 透明背景+无边框， 一般在构造函数设置
+>       // setWindowFlag(Qt::FramelessWindowHint);
+>       // setAttribute(Qt::WA_TranslucentBackground);
+>       
+>       // 创建临时绘图设备
+>       QPixmap buffer(size());
+>       // 将临时绘图设备转换为 QImage
+>       QPainter painter(&buffer);
+>   //    QPainter painter(this);
+>       painter.setRenderHint(QPainter::Antialiasing);
+>       painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
+>       painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+>       painter.fillRect(rect(),QBrush(QColor(0,0,0,1))); // 透明背景
+>   
+>       QRect widgetBody = ui->widget_2->rect().translated(ui->widget_2->mapTo(this, QPoint(0, 0)));
+>       QRect widgetNav = ui->widget_nav->rect().translated(ui->widget_nav->mapTo(this, QPoint(0, 0)));
+>       QColor backGround(255,255,255,255);
+>   
+>   //    qDebug() << centralWidget()->x() << centralWidget()->y();
+>   //    qDebug() << widgetBody.x() << widgetBody.y();
+>   
+>       for(int i = 10; i >= 0; -- i)
+>       {
+>           QRect leftRect(widgetBody.x() - i, widgetBody.y() - i, widgetBody.width() + i * 2, widgetBody.height() + i * 2);
+>           QRect rigRect(widgetNav.x() - i - 5, widgetNav.y() - i, widgetNav.width() + i * 2 + 5, widgetNav.height() + i * 2);
+>           QPainterPath leftPath, rigPath;
+>           leftPath.addRoundedRect(leftRect, i + 5, i + 5);
+>           rigPath.addRoundedRect(rigRect, i + 5, i + 5);
+>           QPainterPath mergedPath = leftPath.united(rigPath);
+>   
+>           int alpha = (int)normalDistribution(i + 3);
+>           QColor color(168, 168, 168, alpha);
+>   
+>           painter.setPen(color);
+>           if(i == 10)
+>               painter.setPen(Qt::red);
+>           if(i == 0)
+>               painter.setPen(Qt::blue);
+>           painter.drawPath(mergedPath);
+>           if(i == 0)
+>               painter.fillPath(mergedPath, backGround);
+>       }
+>   
+>       // 将临时绘图设备的内容绘制到窗口上
+>       QPainter windowPainter(this);
+>       windowPainter.drawPixmap(0, 0, buffer);
+>   }
+>   ~~~
+>
+>   
+>
+> ![image-20231213164306862](QtNote.assets/image-20231213164306862.png)
+
+### 阴影效果
+
+> - Qt阴影对象
+>   ~~~C++
+>    // 创建阴影效果对象
+>    QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(this);
+>    shadowEffect->setBlurRadius(10); // 设置阴影的模糊半径
+>    shadowEffect->setColor(Qt::red); // 设置阴影的颜色
+>    shadowEffect->setOffset(0, 0); // 设置阴影的偏移量
+>    // 将阴影效果应用于 主窗口，此时阴影效果将作用在主窗口所在区域，最底层的且最先有颜色的位置
+>    this->setGraphicsEffect(shadowEffect);
+>   ~~~
+>
+>   > 会影响作用对象区域的DMA窗口的刷新
+>
+> - 绘制
+>
+>   > 在原先窗口上以1px为单位进行扩充，绘制，实现阴影
+>
+>   ~~~C++
+>   void MainWindow::paintEvent(QPaintEvent *event)
+>   {
+>       QPainter painter(this);
+>       painter.setRenderHint(QPainter::Antialiasing);
+>       painter.fillRect(rect(),QBrush(QColor(0,0,0,1)));
+>   
+>       QRect widgetBody = ui->widgetBody->rect().translated(ui->widgetBody->mapTo(this, QPoint(0, 0)));
+>       QRect widgetNav = ui->widgetNav->rect().translated(ui->widgetNav->mapTo(this, QPoint(0, 0)));
+>       QColor backGround(255,255,255,255);
+>   
+>       for(int i = 10; i >= 0; -- i)
+>       {
+>           QRect leftRect(widgetBody.x() - i, widgetBody.y() - i, widgetBody.width() + i * 2, widgetBody.height() + i * 2);
+>           QRect rigRect(widgetNav.x() - i - 5, widgetNav.y() - i, widgetNav.width() + i * 2 + 5, widgetNav.height() + i * 2);
+>           QPainterPath leftPath, rigPath;
+>           leftPath.addRoundedRect(leftRect, i + 5, i + 5);
+>           rigPath.addRoundedRect(rigRect, i + 5, i + 5);
+>           QPainterPath mergedPath = leftPath.united(rigPath);
+>   
+>           int alpha = (int)normalDistribution(i + 3);
+>           QColor color(168, 168, 168, alpha);
+>   
+>           painter.setPen(color);
+>           if(i == 10)
+>               painter.setPen(Qt::red);
+>           if(i == 0)
+>               painter.setPen(Qt::blue);
+>           painter.drawPath(mergedPath);
+>           if(i == 0)
+>               painter.fillPath(mergedPath, backGround);
+>       }
+>   }
+>   ~~~
+
+### 无边框
+
+> [Qt实现无边框窗口实现拉伸的三种方法--附源码_qt 无边框窗口拉伸-CSDN博客](https://blog.csdn.net/qq_51969153/article/details/129392749)
+>
+> [QT窗口缩放，自定义边框，无边框缩放拉伸_qt界面缩放-CSDN博客](https://blog.csdn.net/sijia5135/article/details/115467713)
+>
+> [GitHub - 794100526/BorderDemo: QT 自定义边框示例](https://github.com/794100526/BorderDemo#readme)
+
+### 等比例拉伸主窗口
+
+
 
 # deBug
 

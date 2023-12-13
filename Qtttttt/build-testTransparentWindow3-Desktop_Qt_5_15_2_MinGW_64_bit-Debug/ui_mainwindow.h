@@ -27,6 +27,7 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
+    QHBoxLayout *horizontalLayout_2;
     QHBoxLayout *horizontalLayout;
     QWidget *widgetBody;
     QVBoxLayout *verticalLayout_2;
@@ -56,7 +57,11 @@ public:
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         centralwidget->setStyleSheet(QString::fromUtf8(""));
-        horizontalLayout = new QHBoxLayout(centralwidget);
+        horizontalLayout_2 = new QHBoxLayout(centralwidget);
+        horizontalLayout_2->setSpacing(0);
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(0);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         horizontalLayout->setContentsMargins(20, 20, 20, 20);
@@ -148,6 +153,9 @@ public:
 
 
         horizontalLayout->addWidget(widgetMenu);
+
+
+        horizontalLayout_2->addLayout(horizontalLayout);
 
         MainWindow->setCentralWidget(centralwidget);
         statusBar = new QStatusBar(MainWindow);
