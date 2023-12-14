@@ -44,6 +44,7 @@ public:
             WidgetSettingMain->setObjectName(QString::fromUtf8("WidgetSettingMain"));
         WidgetSettingMain->resize(400, 600);
         WidgetSettingMain->setMinimumSize(QSize(400, 600));
+        WidgetSettingMain->setStyleSheet(QString::fromUtf8("background-color: rgb(60, 181, 181);"));
         verticalLayout = new QVBoxLayout(WidgetSettingMain);
         verticalLayout->setSpacing(0);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));

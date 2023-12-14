@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>520</width>
-    <height>742</height>
+    <width>538</width>
+    <height>760</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -112,6 +112,20 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="btn_max">
+              <property name="text">
+               <string>MAX</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_full">
+              <property name="text">
+               <string>FULL</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="btn_close">
               <property name="text">
                <string>CLose</string>
@@ -133,46 +147,8 @@
             <string notr="true"/>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>-1</number>
            </property>
-           <widget class="QWidget" name="widgetHome">
-            <layout class="QVBoxLayout" name="verticalLayout_4">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="widgetSetting">
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-            </layout>
-           </widget>
           </widget>
          </item>
         </layout>
@@ -284,7 +260,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <resources/>
  <connections>
@@ -295,8 +270,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>309</x>
-     <y>49</y>
+     <x>428</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
      <x>234</x>

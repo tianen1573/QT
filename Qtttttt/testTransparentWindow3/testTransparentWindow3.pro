@@ -11,14 +11,17 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    ui/widget/FloatingWindow.cpp \
     ui/widget/WidgetSettingMain.cpp
 
 HEADERS += \
     mainwindow.h \
+    ui/widget/FloatingWindow.h \
     ui/widget/WidgetSettingMain.h
 
 FORMS += \
     mainwindow.ui \
+    ui/widget/FloatingWindow.ui \
     ui/widget/WidgetSettingMain.ui
 
 # Default rules for deployment.

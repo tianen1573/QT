@@ -17,7 +17,6 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStackedWidget>
-#include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -34,12 +33,10 @@ public:
     QWidget *widgetHeader;
     QHBoxLayout *horizontalLayout_11;
     QLabel *lab_title;
+    QPushButton *btn_max;
+    QPushButton *btn_full;
     QPushButton *btn_close;
     QStackedWidget *stackedMainWidget;
-    QWidget *widgetHome;
-    QVBoxLayout *verticalLayout_4;
-    QWidget *widgetSetting;
-    QVBoxLayout *verticalLayout_5;
     QWidget *widgetMenu;
     QVBoxLayout *verticalLayout;
     QSpacerItem *verticalSpacer;
@@ -47,13 +44,12 @@ public:
     QVBoxLayout *verticalLayout_3;
     QPushButton *btn_setting;
     QSpacerItem *verticalSpacer_2;
-    QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(520, 742);
+        MainWindow->resize(538, 760);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         centralwidget->setStyleSheet(QString::fromUtf8(""));
@@ -86,6 +82,16 @@ public:
 
         horizontalLayout_11->addWidget(lab_title);
 
+        btn_max = new QPushButton(widgetHeader);
+        btn_max->setObjectName(QString::fromUtf8("btn_max"));
+
+        horizontalLayout_11->addWidget(btn_max);
+
+        btn_full = new QPushButton(widgetHeader);
+        btn_full->setObjectName(QString::fromUtf8("btn_full"));
+
+        horizontalLayout_11->addWidget(btn_full);
+
         btn_close = new QPushButton(widgetHeader);
         btn_close->setObjectName(QString::fromUtf8("btn_close"));
 
@@ -98,20 +104,6 @@ public:
         stackedMainWidget->setObjectName(QString::fromUtf8("stackedMainWidget"));
         stackedMainWidget->setMinimumSize(QSize(400, 600));
         stackedMainWidget->setStyleSheet(QString::fromUtf8(""));
-        widgetHome = new QWidget();
-        widgetHome->setObjectName(QString::fromUtf8("widgetHome"));
-        verticalLayout_4 = new QVBoxLayout(widgetHome);
-        verticalLayout_4->setSpacing(0);
-        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
-        verticalLayout_4->setContentsMargins(0, 0, 0, 0);
-        stackedMainWidget->addWidget(widgetHome);
-        widgetSetting = new QWidget();
-        widgetSetting->setObjectName(QString::fromUtf8("widgetSetting"));
-        verticalLayout_5 = new QVBoxLayout(widgetSetting);
-        verticalLayout_5->setSpacing(0);
-        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
-        verticalLayout_5->setContentsMargins(0, 0, 0, 0);
-        stackedMainWidget->addWidget(widgetSetting);
 
         verticalLayout_2->addWidget(stackedMainWidget);
 
@@ -158,14 +150,11 @@ public:
         horizontalLayout_2->addLayout(horizontalLayout);
 
         MainWindow->setCentralWidget(centralwidget);
-        statusBar = new QStatusBar(MainWindow);
-        statusBar->setObjectName(QString::fromUtf8("statusBar"));
-        MainWindow->setStatusBar(statusBar);
 
         retranslateUi(MainWindow);
         QObject::connect(btn_close, SIGNAL(clicked()), MainWindow, SLOT(close()));
 
-        stackedMainWidget->setCurrentIndex(1);
+        stackedMainWidget->setCurrentIndex(-1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -175,6 +164,8 @@ public:
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         lab_title->setText(QCoreApplication::translate("MainWindow", "TEST_TIGER", nullptr));
+        btn_max->setText(QCoreApplication::translate("MainWindow", "MAX", nullptr));
+        btn_full->setText(QCoreApplication::translate("MainWindow", "FULL", nullptr));
         btn_close->setText(QCoreApplication::translate("MainWindow", "CLose", nullptr));
         btn_setting->setText(QCoreApplication::translate("MainWindow", "setting", nullptr));
     } // retranslateUi
