@@ -60,7 +60,7 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(0);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        horizontalLayout->setContentsMargins(20, 20, 20, 20);
+        horizontalLayout->setContentsMargins(0, 0, 0, 0);
         widgetBody = new QWidget(centralwidget);
         widgetBody->setObjectName(QString::fromUtf8("widgetBody"));
         widgetBody->setMinimumSize(QSize(400, 680));

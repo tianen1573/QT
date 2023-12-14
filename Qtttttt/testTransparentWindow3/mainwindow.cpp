@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_floatingWindow, &FloatingWindow::checkFull, this, &MainWindow::on_btn_full_clicked);
 
     ui->setupUi(this);
+    ui->centralwidget->setContentsMargins(20, 20, 20, 20);
 
     ui->stackedMainWidget->addWidget(m_mainSetting);
 
@@ -159,7 +160,7 @@ void MainWindow::on_btn_full_clicked()
     if(this->m_isFullScreen){
 
         qDebug() << "FULL";
-
+        ui->centralwidget->setContentsMargins(0, 0, 0, 0);
         ui->widgetHeader->hide();
         ui->widgetMenu->hide();
         this->showFullScreen();
@@ -175,7 +176,7 @@ void MainWindow::on_btn_full_clicked()
         qDebug() << "NOFULL";
 //        this->showNormal();
 //        this->resize(m_size);
-
+        ui->centralwidget->setContentsMargins(20, 20, 20, 20);
         m_floatingWindow->hide();
         this->showNormal();
         ui->widgetMenu->show();

@@ -737,7 +737,7 @@ BackupMaker {
 >   ![image-20231213164815195](QtNote.assets/image-20231213164815195.png)
 >
 >   ~~~C++
->       
+>         
 >    // 绘制圆角矩形
 >    painter.drawRoundedRect(widget2Rect, radius, radius);
 >    // 填充左下角
@@ -747,7 +747,7 @@ BackupMaker {
 >    widget2Rect = QRect(ui->widget_2->geometry().x() + ui->widget_2->geometry().width() - radius,  \
 >                       ui->widget_2->geometry().y() + ui->widget_2->geometry().height() - radius, radius, radius);
 >    painter.fillRect(widget2Rect, backGround);
->       
+>         
 >    // 绘制圆角矩形
 >    painter.drawRoundedRect(widget3Rect, radius, radius);
 >    // 填充左上角
@@ -758,7 +758,7 @@ BackupMaker {
 >    widget3Rect = QRect(widget3Rect.x(), \
 >                        widget3Rect.y() + ui->widget_3->height() - radius, radius, radius);
 >    painter.fillRect(widget3Rect, backGround);
->       
+>         
 >   ~~~
 >
 >   
@@ -772,7 +772,7 @@ BackupMaker {
 >       // 透明背景+无边框， 一般在构造函数设置
 >       // setWindowFlag(Qt::FramelessWindowHint);
 >       // setAttribute(Qt::WA_TranslucentBackground);
->           
+>             
 >       // 创建临时绘图设备
 >       QPixmap buffer(size());
 >       // 将临时绘图设备转换为 QImage
@@ -782,14 +782,14 @@ BackupMaker {
 >       painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
 >       painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 >       painter.fillRect(rect(),QBrush(QColor(0,0,0,1))); // 透明背景
->       
+>         
 >       QRect widgetBody = ui->widget_2->rect().translated(ui->widget_2->mapTo(this, QPoint(0, 0)));
 >       QRect widgetNav = ui->widget_nav->rect().translated(ui->widget_nav->mapTo(this, QPoint(0, 0)));
 >       QColor backGround(255,255,255,255);
->       
+>         
 >   //    qDebug() << centralWidget()->x() << centralWidget()->y();
 >   //    qDebug() << widgetBody.x() << widgetBody.y();
->       
+>         
 >       for(int i = 10; i >= 0; -- i)
 >       {
 >           QRect leftRect(widgetBody.x() - i, widgetBody.y() - i, widgetBody.width() + i * 2, widgetBody.height() + i * 2);
@@ -798,10 +798,10 @@ BackupMaker {
 >           leftPath.addRoundedRect(leftRect, i + 5, i + 5);
 >           rigPath.addRoundedRect(rigRect, i + 5, i + 5);
 >           QPainterPath mergedPath = leftPath.united(rigPath);
->       
+>         
 >           int alpha = (int)normalDistribution(i + 3);
 >           QColor color(168, 168, 168, alpha);
->       
+>         
 >           painter.setPen(color);
 >           if(i == 10)
 >               painter.setPen(Qt::red);
@@ -811,7 +811,7 @@ BackupMaker {
 >           if(i == 0)
 >               painter.fillPath(mergedPath, backGround);
 >       }
->       
+>         
 >       // 将临时绘图设备的内容绘制到窗口上
 >       QPainter windowPainter(this);
 >       windowPainter.drawPixmap(0, 0, buffer);
@@ -847,11 +847,11 @@ BackupMaker {
 >       QPainter painter(this);
 >       painter.setRenderHint(QPainter::Antialiasing);
 >       painter.fillRect(rect(),QBrush(QColor(0,0,0,1)));
->       
+>         
 >       QRect widgetBody = ui->widgetBody->rect().translated(ui->widgetBody->mapTo(this, QPoint(0, 0)));
 >       QRect widgetNav = ui->widgetNav->rect().translated(ui->widgetNav->mapTo(this, QPoint(0, 0)));
 >       QColor backGround(255,255,255,255);
->       
+>         
 >       for(int i = 10; i >= 0; -- i)
 >       {
 >           QRect leftRect(widgetBody.x() - i, widgetBody.y() - i, widgetBody.width() + i * 2, widgetBody.height() + i * 2);
@@ -860,10 +860,10 @@ BackupMaker {
 >           leftPath.addRoundedRect(leftRect, i + 5, i + 5);
 >           rigPath.addRoundedRect(rigRect, i + 5, i + 5);
 >           QPainterPath mergedPath = leftPath.united(rigPath);
->       
+>         
 >           int alpha = (int)normalDistribution(i + 3);
 >           QColor color(168, 168, 168, alpha);
->       
+>         
 >           painter.setPen(color);
 >           if(i == 10)
 >               painter.setPen(Qt::red);
@@ -2874,3 +2874,10 @@ https://www.hardcode.today/macos-app-zi-dong-sheng-ji-shi-xian.html
 
 # 更改
 
+去除ui文件设置的边距，改由cpp文件设置
+
+![image-20231214225605724](%E5%9B%BE%E7%89%87/QtNote/image-20231214225605724.png)
+
+![image-20231214225623034](%E5%9B%BE%E7%89%87/QtNote/image-20231214225623034.png)
+
+![image-20231214225656908](%E5%9B%BE%E7%89%87/QtNote/image-20231214225656908.png)
