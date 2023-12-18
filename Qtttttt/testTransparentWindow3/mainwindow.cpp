@@ -12,12 +12,14 @@
 
 #include "ui/widget/WidgetSettingMain.h"
 #include "ui/widget/FloatingWindow.h"
+#include "ui/widget/WidgetTestCenter.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_isFullScreen(false)
     , m_mainSetting(new WidgetSettingMain)
     , m_floatingWindow(new FloatingWindow)
+    , m_testCenter(new WidgetTestCenter)
     , ui(new Ui::MainWindow)
 {
     QApplication::instance()->installEventFilter(this);
@@ -35,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->centralwidget->setContentsMargins(20, 20, 20, 20);
 
     ui->stackedMainWidget->addWidget(m_mainSetting);
+    ui->stackedMainWidget->addWidget(m_testCenter);
 
     // 创建 时间监视器
     timer = new QTimer(this);
@@ -87,7 +90,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::Antialiasing);
 
     if(m_isFullScreen){
-        painter.fillRect(rect(),QBrush(QColor(255,255,255,255)));
+        painter.fillRect(rect(),QBrush(QColor(0,0,0,255)));
         return ;
     }
 
@@ -193,19 +196,17 @@ void MainWindow::resetTimer()
         timer->start();
     }
 }
+
 void MainWindow::hideWindow()
 {
     m_floatingWindow->hide();
 }
 
-
 void MainWindow::on_btn_max_clicked()
 {
-    if(m_isFullScreen){
-        m_floatingWindow->show();
-    }
+    int nextIndex = (this->ui->stackedMainWidget->currentIndex() + 1) % this->ui->stackedMainWidget->count();
+    this->ui->stackedMainWidget->setCurrentIndex(nextIndex);
 }
-
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {

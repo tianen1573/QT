@@ -12,17 +12,20 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     ui/widget/FloatingWindow.cpp \
-    ui/widget/WidgetSettingMain.cpp
+    ui/widget/WidgetSettingMain.cpp \
+    ui/widget/WidgetTestCenter.cpp
 
 HEADERS += \
     mainwindow.h \
     ui/widget/FloatingWindow.h \
-    ui/widget/WidgetSettingMain.h
+    ui/widget/WidgetSettingMain.h \
+    ui/widget/WidgetTestCenter.h
 
 FORMS += \
     mainwindow.ui \
     ui/widget/FloatingWindow.ui \
-    ui/widget/WidgetSettingMain.ui
+    ui/widget/WidgetSettingMain.ui \
+    ui/widget/WidgetTestCenter.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

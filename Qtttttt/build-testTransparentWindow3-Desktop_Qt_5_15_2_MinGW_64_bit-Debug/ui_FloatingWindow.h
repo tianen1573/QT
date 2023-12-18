@@ -74,7 +74,13 @@ public:
     void retranslateUi(QWidget *FloatingWindow)
     {
         FloatingWindow->setWindowTitle(QCoreApplication::translate("FloatingWindow", "Form", nullptr));
-        btn_back->setText(QCoreApplication::translate("FloatingWindow", "Back", nullptr));
+#if QT_CONFIG(tooltip)
+        btn_back->setToolTip(QCoreApplication::translate("FloatingWindow", "Back", nullptr));
+#endif // QT_CONFIG(tooltip)
+        btn_back->setText(QString());
+#if QT_CONFIG(tooltip)
+        btn_full->setToolTip(QCoreApplication::translate("FloatingWindow", "NoFull", nullptr));
+#endif // QT_CONFIG(tooltip)
         btn_full->setText(QCoreApplication::translate("FloatingWindow", "Full", nullptr));
         btn_C->setText(QCoreApplication::translate("FloatingWindow", "PushButton", nullptr));
         btn_A->setText(QCoreApplication::translate("FloatingWindow", "PushButton", nullptr));

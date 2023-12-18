@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>538</width>
-    <height>760</height>
+    <width>482</width>
+    <height>682</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -114,7 +114,7 @@
             <item>
              <widget class="QPushButton" name="btn_max">
               <property name="text">
-               <string>MAX</string>
+               <string>Next</string>
               </property>
              </widget>
             </item>
@@ -145,6 +145,9 @@
            </property>
            <property name="styleSheet">
             <string notr="true"/>
+           </property>
+           <property name="lineWidth">
+            <number>0</number>
            </property>
            <property name="currentIndex">
             <number>-1</number>

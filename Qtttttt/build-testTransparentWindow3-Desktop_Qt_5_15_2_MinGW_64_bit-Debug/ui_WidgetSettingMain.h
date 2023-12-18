@@ -23,6 +23,9 @@ QT_BEGIN_NAMESPACE
 class Ui_WidgetSettingMain
 {
 public:
+    QHBoxLayout *horizontalLayout_2;
+    QSpacerItem *horizontalSpacer_3;
+    QWidget *widget_2;
     QVBoxLayout *verticalLayout;
     QWidget *widgetTitle;
     QHBoxLayout *horizontalLayout;
@@ -37,6 +40,7 @@ public:
     QPushButton *btn_test_2;
     QPushButton *btn_test;
     QSpacerItem *verticalSpacer;
+    QSpacerItem *horizontalSpacer_4;
 
     void setupUi(QWidget *WidgetSettingMain)
     {
@@ -45,11 +49,21 @@ public:
         WidgetSettingMain->resize(400, 600);
         WidgetSettingMain->setMinimumSize(QSize(400, 600));
         WidgetSettingMain->setStyleSheet(QString::fromUtf8("background-color: rgb(60, 181, 181);"));
-        verticalLayout = new QVBoxLayout(WidgetSettingMain);
+        horizontalLayout_2 = new QHBoxLayout(WidgetSettingMain);
+        horizontalLayout_2->setSpacing(0);
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        horizontalSpacer_3 = new QSpacerItem(1, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer_3);
+
+        widget_2 = new QWidget(WidgetSettingMain);
+        widget_2->setObjectName(QString::fromUtf8("widget_2"));
+        verticalLayout = new QVBoxLayout(widget_2);
         verticalLayout->setSpacing(0);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
-        widgetTitle = new QWidget(WidgetSettingMain);
+        widgetTitle = new QWidget(widget_2);
         widgetTitle->setObjectName(QString::fromUtf8("widgetTitle"));
         widgetTitle->setMinimumSize(QSize(400, 80));
         horizontalLayout = new QHBoxLayout(widgetTitle);
@@ -70,7 +84,7 @@ public:
 
         verticalLayout->addWidget(widgetTitle);
 
-        widget = new QWidget(WidgetSettingMain);
+        widget = new QWidget(widget_2);
         widget->setObjectName(QString::fromUtf8("widget"));
         widget->setMinimumSize(QSize(0, 0));
         verticalLayout_2 = new QVBoxLayout(widget);
@@ -113,6 +127,13 @@ public:
 
 
         verticalLayout->addWidget(widget);
+
+
+        horizontalLayout_2->addWidget(widget_2);
+
+        horizontalSpacer_4 = new QSpacerItem(1, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer_4);
 
 
         retranslateUi(WidgetSettingMain);

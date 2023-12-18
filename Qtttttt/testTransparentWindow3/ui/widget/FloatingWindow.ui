@@ -47,13 +47,19 @@ background-color: rgb(255, 255, 255);</string>
    </property>
    <item>
     <widget class="QPushButton" name="btn_back">
-     <property name="text">
+     <property name="toolTip">
       <string>Back</string>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="btn_full">
+     <property name="toolTip">
+      <string>NoFull</string>
+     </property>
      <property name="text">
       <string>Full</string>
      </property>

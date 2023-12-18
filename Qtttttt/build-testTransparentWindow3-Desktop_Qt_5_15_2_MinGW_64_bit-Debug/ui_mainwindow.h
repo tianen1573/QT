@@ -49,7 +49,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(538, 760);
+        MainWindow->resize(482, 682);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         centralwidget->setStyleSheet(QString::fromUtf8(""));
@@ -104,6 +104,7 @@ public:
         stackedMainWidget->setObjectName(QString::fromUtf8("stackedMainWidget"));
         stackedMainWidget->setMinimumSize(QSize(400, 600));
         stackedMainWidget->setStyleSheet(QString::fromUtf8(""));
+        stackedMainWidget->setLineWidth(0);
 
         verticalLayout_2->addWidget(stackedMainWidget);
 
@@ -164,7 +165,7 @@ public:
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         lab_title->setText(QCoreApplication::translate("MainWindow", "TEST_TIGER", nullptr));
-        btn_max->setText(QCoreApplication::translate("MainWindow", "MAX", nullptr));
+        btn_max->setText(QCoreApplication::translate("MainWindow", "Next", nullptr));
         btn_full->setText(QCoreApplication::translate("MainWindow", "FULL", nullptr));
         btn_close->setText(QCoreApplication::translate("MainWindow", "CLose", nullptr));
         btn_setting->setText(QCoreApplication::translate("MainWindow", "setting", nullptr));

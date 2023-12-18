@@ -9,6 +9,7 @@ QT_END_NAMESPACE
 
 class WidgetSettingMain;
 class FloatingWindow;
+class WidgetTestCenter;
 
 class MainWindow : public QMainWindow
 {
@@ -21,6 +22,7 @@ private:
     Ui::MainWindow *ui;
 
     // other
+    WidgetTestCenter * m_testCenter;
     WidgetSettingMain * m_mainSetting;
     FloatingWindow * m_floatingWindow;
     QTimer *timer;
