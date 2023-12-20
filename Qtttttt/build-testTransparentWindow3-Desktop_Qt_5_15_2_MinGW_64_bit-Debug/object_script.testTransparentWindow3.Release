@@ -1,0 +1,14 @@
+release/DeviceInfo.o
+release/GlobalReferences.o
+release/MainWindowImpl_win.o
+release/WindowsAPIUtil.o
+release/main.o
+release/mainwindow.o
+release/FloatingWindow.o
+release/WidgetSettingMain.o
+release/WidgetTestCenter.o
+release/moc_MainWindowImpl_win.o
+release/moc_mainwindow.o
+release/moc_FloatingWindow.o
+release/moc_WidgetSettingMain.o
+release/moc_WidgetTestCenter.o

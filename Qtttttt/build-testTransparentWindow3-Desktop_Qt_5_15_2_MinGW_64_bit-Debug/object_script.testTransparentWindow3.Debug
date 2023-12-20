@@ -1,0 +1,14 @@
+debug/DeviceInfo.o
+debug/GlobalReferences.o
+debug/MainWindowImpl_win.o
+debug/WindowsAPIUtil.o
+debug/main.o
+debug/mainwindow.o
+debug/FloatingWindow.o
+debug/WidgetSettingMain.o
+debug/WidgetTestCenter.o
+debug/moc_MainWindowImpl_win.o
+debug/moc_mainwindow.o
+debug/moc_FloatingWindow.o
+debug/moc_WidgetSettingMain.o
+debug/moc_WidgetTestCenter.o

@@ -31,9 +31,9 @@ public:
     {
         if (FloatingWindow->objectName().isEmpty())
             FloatingWindow->setObjectName(QString::fromUtf8("FloatingWindow"));
-        FloatingWindow->resize(360, 90);
+        FloatingWindow->resize(330, 90);
         FloatingWindow->setMinimumSize(QSize(330, 90));
-        FloatingWindow->setMaximumSize(QSize(360, 90));
+        FloatingWindow->setMaximumSize(QSize(330, 90));
         FloatingWindow->setStyleSheet(QString::fromUtf8("\n"
 "background-color: rgb(255, 255, 255);"));
         horizontalLayout = new QHBoxLayout(FloatingWindow);
@@ -42,26 +42,36 @@ public:
         horizontalLayout->setContentsMargins(30, 30, 30, 30);
         btn_back = new QPushButton(FloatingWindow);
         btn_back->setObjectName(QString::fromUtf8("btn_back"));
+        btn_back->setMinimumSize(QSize(30, 0));
+        btn_back->setMaximumSize(QSize(30, 30));
 
         horizontalLayout->addWidget(btn_back);
 
         btn_full = new QPushButton(FloatingWindow);
         btn_full->setObjectName(QString::fromUtf8("btn_full"));
+        btn_full->setMinimumSize(QSize(30, 0));
+        btn_full->setMaximumSize(QSize(30, 16777215));
 
         horizontalLayout->addWidget(btn_full);
 
         btn_C = new QPushButton(FloatingWindow);
         btn_C->setObjectName(QString::fromUtf8("btn_C"));
+        btn_C->setMinimumSize(QSize(30, 0));
+        btn_C->setMaximumSize(QSize(30, 16777215));
 
         horizontalLayout->addWidget(btn_C);
 
         btn_A = new QPushButton(FloatingWindow);
         btn_A->setObjectName(QString::fromUtf8("btn_A"));
+        btn_A->setMinimumSize(QSize(30, 0));
+        btn_A->setMaximumSize(QSize(30, 16777215));
 
         horizontalLayout->addWidget(btn_A);
 
         btn_B = new QPushButton(FloatingWindow);
         btn_B->setObjectName(QString::fromUtf8("btn_B"));
+        btn_B->setMinimumSize(QSize(30, 0));
+        btn_B->setMaximumSize(QSize(30, 16777215));
 
         horizontalLayout->addWidget(btn_B);
 

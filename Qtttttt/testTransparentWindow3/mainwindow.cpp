@@ -1,21 +1,29 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include <QPainter>
 #include <QPainterPath>
 #include <QGraphicsDropShadowEffect>
-#include <cmath>
 #include <QDebug>
-
 #include <QTimer>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QRect>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <GlobalReferences.h>
+#include <QGraphicsDropShadowEffect>
+#include <QtMath>
+#include <QtCore>
+#include <QScreen>
 
 #include "ui/widget/WidgetSettingMain.h"
 #include "ui/widget/FloatingWindow.h"
 #include "ui/widget/WidgetTestCenter.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : MainWindowImpl_win(parent)
     , m_isFullScreen(false)
     , m_mainSetting(new WidgetSettingMain)
     , m_floatingWindow(new FloatingWindow)
@@ -129,7 +137,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         // 记录鼠标按下时的位置
         m_dragStartPosition = event->globalPos();
         // 设置拖动标志
-        m_isDragging = true;
+        if(!this->m_isFullScreen)
+            m_isDragging = true;
     }
     QMainWindow::mousePressEvent(event);
 }
@@ -167,9 +176,24 @@ void MainWindow::on_btn_full_clicked()
         ui->widgetHeader->hide();
         ui->widgetMenu->hide();
         this->showFullScreen();
-        QRect screenRect = this->geometry();
-        int x = screenRect.right() - m_floatingWindow->width();
-        int y = screenRect.top();
+
+
+        QPoint mainWindowPos = this->mapToGlobal(QPoint(0, 0));
+        qDebug() << mainWindowPos.x() << mainWindowPos.y();
+        QScreen *primaryScreen = QGuiApplication::primaryScreen();
+        QRect primaryScreenGeometry = primaryScreen->geometry();
+        QPoint mainWindowPosOnPrimaryScreen = mainWindowPos - primaryScreenGeometry.topLeft();
+
+        QRect fullScreenRect = this->rect();
+//        QRect fullScreenRect = getRealRect(this->geometry());
+        int x = mainWindowPosOnPrimaryScreen.x() + fullScreenRect.width() - m_floatingWindow->rect().width();
+        int y = mainWindowPosOnPrimaryScreen.y();
+        int xx = mainWindowPosOnPrimaryScreen.x();
+        int yy = mainWindowPosOnPrimaryScreen.y();
+
+        qDebug() << xx << yy;
+        qDebug() << x << y;
+
         m_floatingWindow->move(x, y);
         m_floatingWindow->show();
 
@@ -216,7 +240,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             // 鼠标移动时重新设置计时器
             resetTimer();
             m_floatingWindow->show();
-            qDebug() << "2 ";
+//            qDebug() << "2 ";
         }
     }
 

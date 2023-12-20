@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <MainWindowImpl_win.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -11,7 +12,7 @@ class WidgetSettingMain;
 class FloatingWindow;
 class WidgetTestCenter;
 
-class MainWindow : public QMainWindow
+class MainWindow : public MainWindowImpl_win
 {
     Q_OBJECT
 

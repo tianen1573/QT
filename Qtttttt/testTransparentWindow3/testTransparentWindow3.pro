@@ -9,6 +9,10 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    DeviceInfo.cpp \
+    GlobalReferences.cpp \
+    MainWindowImpl_win.cpp \
+    WindowsAPIUtil.cpp \
     main.cpp \
     mainwindow.cpp \
     ui/widget/FloatingWindow.cpp \
@@ -16,6 +20,12 @@ SOURCES += \
     ui/widget/WidgetTestCenter.cpp
 
 HEADERS += \
+    CommonGlobal.h \
+    DeviceInfo.h \
+    GlobalReferences.h \
+    MainWindowImpl_win.h \
+    UtilsGlobal.h \
+    WindowsAPIUtil.h \
     mainwindow.h \
     ui/widget/FloatingWindow.h \
     ui/widget/WidgetSettingMain.h \
@@ -31,3 +41,7 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    .gitignore \
+    testTransparentWindow3.pro.user
